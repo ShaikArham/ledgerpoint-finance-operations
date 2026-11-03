@@ -98,3 +98,10 @@ Evidence: https://github.com/ShaikArham/ledgerpoint-finance-operations/actions/r
 - Theme commit: `3b02f53d90c300978eaf5ed17057793b8e968d65`.
 - Prior CI evidence of 209 passing tests applies to PR #6 commit `23c378a...`, **not this newer theme commit**.
 - Live appearance, mobile viewport rendering and latest-main CI remain unverified. Release sign-off remains pending.
+
+## OpsResolve-inspired layout revision — 2026-11-03
+
+- Inspected `ShaikArham/opsresolve-ai/index.html` directly. Reused layout ideas only: dark gradient sidebar, pale workspace, white KPI cards, subtle shadows and mobile constraints.
+- Added Streamlit sidebar with five-stage reviewer journey; retained all twelve functional tabs and the fictional accounting scenario.
+- Commit `2215151d712db1627b022792db704962e044f5b9`.
+- **No browser screenshot, mobile viewport render or CI run has yet verified this exact new commit.** The previously verified 209-test pass belongs to an earlier PR commit. Release sign-off remains pending.
