@@ -23,14 +23,14 @@ class StagingResult:
     errors: tuple[dict[str, str], ...]
     total_rows: int
 
-def _money(raw: str, label: str, *, allow_negative: bool = False) -> Decimal:
+def _money(raw: str, label: str, *, allow_negative: bool = False, allow_zero: bool = False) -> Decimal:
     try:
         value = Decimal(raw.strip())
     except (InvalidOperation, AttributeError):
         raise ValueError(f"{label}: invalid decimal") from None
     if not value.is_finite() or value.as_tuple().exponent < -2:
         raise ValueError(f"{label}: must be finite with at most two decimal places")
-    if not allow_negative and value <= 0:
+    if not allow_negative and not allow_zero and value <= 0:
         raise ValueError(f"{label}: must be positive")
     if allow_negative and value == 0:
         raise ValueError(f"{label}: must not be zero")
@@ -96,11 +96,11 @@ def stage_csv(data: bytes, kind: str) -> StagingResult:
                     if due < issued:
                         raise ValueError("Due date precedes issue date")
                     net = _money(item["Net (€)"], "Net (€)")
-                    vat = _money(item["Illustrative VAT (€)"], "Illustrative VAT (€)", allow_negative=True) if item["Illustrative VAT (€)"].strip() not in ("0", "0.0", "0.00") else Decimal("0")
+                    vat = _money(item["Illustrative VAT (€)"], "Illustrative VAT (€)", allow_zero=True)
                     if vat < 0:
                         raise ValueError("Illustrative VAT cannot be negative")
                     gross = _money(item["Gross (€)"], "Gross (€)")
-                    outstanding = Decimal(item["Outstanding (€)"])
+                    outstanding = _money(item["Outstanding (€)"], "Outstanding (€)", allow_zero=True)
                     if not outstanding.is_finite() or outstanding < 0 or outstanding > gross or outstanding.as_tuple().exponent < -2:
                         raise ValueError("Outstanding must be between zero and gross with at most two decimals")
                     if net + vat != gross:
