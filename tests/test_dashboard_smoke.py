@@ -44,4 +44,4 @@ def test_reviewer_story_visible():
     app = AppTest.from_file(APP, default_timeout=30).run()
     assert not app.exception
     assert any("LedgerPoint" in heading.value for heading in app.title)
-    assert any("Priority investigation" in heading.value for heading in app.markdown)
+    assert any("The case:" in block.value for block in app.markdown)
