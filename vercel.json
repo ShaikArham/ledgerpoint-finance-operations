@@ -1,1 +1,46 @@
-{"version":2,"builds":[{"src":"index.html","use":"@vercel/static"},{"src":"styles.css","use":"@vercel/static"},{"src":"script.js","use":"@vercel/static"},{"src":"assets/**","use":"@vercel/static"}],"routes":[{"src":"/","dest":"/index.html"},{"handle":"filesystem"}]}
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "styles.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "script.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "assets/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "intro.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "film.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "film.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "film.css",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "handle": "filesystem"
+    }
+  ]
+}

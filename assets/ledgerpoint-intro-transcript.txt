@@ -1,0 +1,25 @@
+LedgerPoint: The €12 Mystery
+Full narration · seven scenes · target runtime 90 seconds
+
+00:00–00:07
+It's only twelve euro. So why doesn't it match?
+
+00:07–00:20
+Sometimes the smallest discrepancy raises the biggest question. Can we explain every number, from the original invoice to the final bank transaction?
+
+00:20–00:34
+That's what drew me to DataPoint Ireland. Your work brings together accounting, payroll, reporting and business analytics to help businesses make more informed decisions.
+
+00:34–00:48
+Then I read your Accounts and Payroll Analyst vacancy. Instead of simply listing my skills in another CV, I wanted to demonstrate how I approach the work.
+
+00:48–01:00
+So I built LedgerPoint, an independent finance operations prototype inspired by DataPoint's work and the responsibilities of this position.
+
+01:00–01:18
+It brings invoices, reconciliation and financial reporting into one demonstration. Here, a twelve-euro bank debit has no ledger match. LedgerPoint flags it for investigation rather than inventing an explanation.
+
+01:18–01:30
+I'm Shaik Arham Saquib. With experience in business intelligence and data analytics, this is how I chose to apply. Welcome to LedgerPoint.
+
+Independent fictional portfolio demonstration. Not commissioned or endorsed by DataPoint Ireland.
