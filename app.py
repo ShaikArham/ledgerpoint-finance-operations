@@ -11,7 +11,7 @@ from ledgerpoint.reconciliation import reconciliation_summary
 from ledgerpoint.triage import investigate
 from ledgerpoint.receivables import invoice_positions
 from ledgerpoint.manual_entry import post_manual
-from ledgerpoint.csv_staging import stage_csv, csv_export, SCHEMAS
+from ledgerpoint.csv_staging import stage_csv, csv_export, SCHEMAS, detect_csv_kind
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -254,16 +254,19 @@ with tab6:
 with tab7:
     st.subheader("CSV upload and quality checks")
     st.info("Upload fictional data for validation only. Nothing is posted to the ledger or sent to a bank.")
-    import_type = st.radio("Import type", ["invoices", "bank", "invoice_register"], horizontal=True,
-                           format_func=lambda value: {"invoices": "Invoice intake", "bank": "Bank transactions", "invoice_register": "LedgerPoint invoice register export"}[value])
-    columns = SCHEMAS[import_type]
-    st.caption("Required columns: " + ", ".join(columns))
+    import_type = st.radio("Import type", ["auto", "invoices", "bank", "invoice_register"], horizontal=True,
+                           format_func=lambda value: {"auto": "Auto-detect (recommended)", "invoices": "Invoice intake", "bank": "Bank transactions", "invoice_register": "LedgerPoint invoice register export"}[value])
+    columns = SCHEMAS.get(import_type)
+    if columns:
+        st.caption("Required columns: " + ", ".join(columns))
+    else:
+        st.caption("Upload any supported CSV format. LedgerPoint identifies its column structure automatically.")
     st.caption("Choose LedgerPoint invoice register export for CSVs downloaded from the invoice table. Party names are preserved; no party IDs are invented.")
     sample = (
         "invoice_id,kind,party_id,issue_date,due_date,net_amount,vat_rate\\n"
         "DEMO-001,sales,C-001,2026-10-05,2026-11-04,100.00,0.23\\n"
         "DEMO-001,sales,C-001,2026-10-05,2026-11-04,100.00,0.23\\n"
-        if import_type == "invoices" else
+        if import_type in ("invoices", "auto") else
         "reference,date,amount\\nBANK-001,2026-10-15,500.00\\n"
         "BANK-001,2026-10-16,500.00\\n"
         if import_type == "bank" else
@@ -277,10 +280,13 @@ with tab7:
                               type=["csv"], key=f"staging_{import_type}")
     if upload is not None:
         try:
-            result = stage_csv(upload.getvalue(), import_type)
+            detected_type = detect_csv_kind(upload.getvalue()) if import_type == "auto" else import_type
+            result = stage_csv(upload.getvalue(), detected_type)
         except ValueError as exc:
             st.error(f"Import rejected: {exc}")
         else:
+            st.success("Detected format: " + {"invoices": "Invoice intake", "bank": "Bank transactions", "invoice_register": "LedgerPoint invoice register export"}[detected_type])
+            export_columns = SCHEMAS[detected_type]
             one, two, three = st.columns(3)
             one.metric("Rows examined", result.total_rows)
             two.metric("Valid rows", len(result.clean))
@@ -288,8 +294,8 @@ with tab7:
             if result.clean:
                 st.markdown("#### Validated preview")
                 st.dataframe(list(result.clean), width="stretch", hide_index=True)
-                st.download_button("Download cleaned CSV", csv_export(result.clean, columns),
-                                   file_name=f"ledgerpoint-{import_type}-clean.csv",
+                st.download_button("Download cleaned CSV", csv_export(result.clean, export_columns),
+                                   file_name=f"ledgerpoint-{detected_type}-clean.csv",
                                    mime="text/csv", key=f"clean_{import_type}")
             if result.errors:
                 st.markdown("#### Rows needing correction")
