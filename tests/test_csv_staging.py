@@ -60,3 +60,22 @@ def test_oversized_file_rejected():
 def test_clean_csv_export():
     result = stage_csv(b"reference,date,amount\nR1,2026-10-01,5\n", "bank")
     assert "R1,2026-10-01,5" in csv_export(result.clean, ("reference", "date", "amount"))
+
+def test_ledgerpoint_register_roundtrip():
+    data = ("Invoice,Type,Party,Issue date,Due date,Net (€),Illustrative VAT (€),Gross (€),Outstanding (€),Status\\n"
+            "SALE-001,Sales,Harbour Design Studio,2026-10-05,2026-11-04,1000,230,1230,730,Outstanding\\n"
+            "BILL-001,Purchase,North Quay Supplies,2026-10-07,2026-11-06,300,69,369,0,Settled\\n").replace("\\n", "\n")
+    result = stage_csv(data.encode("utf-8-sig"), "invoice_register")
+    assert result.total_rows == 2
+    assert len(result.clean) == 2
+    assert result.errors == ()
+    exported = csv_export(result.clean, ("Invoice", "Type", "Party", "Issue date", "Due date",
+                                         "Net (€)", "Illustrative VAT (€)", "Gross (€)", "Outstanding (€)", "Status"))
+    assert "Harbour Design Studio" in exported
+
+def test_register_rejects_wrong_totals():
+    data = ("Invoice,Type,Party,Issue date,Due date,Net (€),Illustrative VAT (€),Gross (€),Outstanding (€),Status\\n"
+            "SALE-001,Sales,Harbour Design Studio,2026-10-05,2026-11-04,1000,230,1200,730,Outstanding\\n").replace("\\n", "\n")
+    result = stage_csv(data.encode(), "invoice_register")
+    assert len(result.errors) == 1
+    assert "must equal gross" in result.errors[0]["reason"]
