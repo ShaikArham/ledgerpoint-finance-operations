@@ -19,7 +19,7 @@
       invoices:"Invoice register", performance:"Financial performance",
       "case-study":"Case study"
     }[chosen]);
-    if (scroll) window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});
+    if (scroll) window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
   }
   function sync(scroll=false) { show(decodeURIComponent(location.hash.slice(1)),scroll); }
   links.forEach(link => link.addEventListener("click", () => {
