@@ -22,15 +22,16 @@ st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="�
 st.markdown("""
 <style>
 .block-container {max-width: 1180px; padding-top: 2rem}
-@media (max-width: 640px) {.block-container {padding: 1rem .75rem 2rem; max-width: 100%}}
+@media (max-width: 640px) {.block-container {padding: 1rem .75rem 2rem; max-width: 100%} [data-testid="stMetric"] {padding: 10px}}
 h1, h2, h3 {letter-spacing: -.025em}
 [data-testid="stMetric"] {background: #f3f6fa; border: 1px solid #e1e8f0; padding: 16px; border-radius: 12px}
 </style>
 """, unsafe_allow_html=True)
-st.title("LedgerPoint | Finance Operations")
+st.title("LedgerPoint")
 st.caption("From invoice to insight · Interactive fictional finance-operations case study")
 st.info("Independent portfolio demonstration using fictional data. Not affiliated with DataPoint Ireland. VAT and payroll figures are illustrative, not tax or payroll advice.")
-st.markdown("**Start here:** Overview → Bank reconciliation → Exception cases → Approvals & audit → Financial reports. A reviewer can follow the core workflow in about 3 minutes.")
+st.markdown("**The case:** A fictional €12 bank debit has no matching ledger entry. Trace it from the executive dashboard through reconciliation, investigation and a maker-checker review, without inventing an accounting posting.")
+st.caption("REVIEWER ROUTE · Overview → Bank reconciliation → Exception cases → Approvals & audit → Financial reports · ~3 minutes")
 
 demo = build_demo()
 book = demo.book
@@ -40,6 +41,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10, tab11, tab12 = st.t
 
 with tab1:
     st.subheader("October 2026 · Executive overview")
+    st.caption("01 / 05 · Establish the financial position and identify the exception requiring attention.")
     a, b, c, d = st.columns(4)
     a.metric("Revenue", f"€{demo.october.revenue:,.2f}")
     b.metric("Expenses", f"€{demo.october.expenses:,.2f}")
@@ -64,17 +66,17 @@ with tab1:
         st.metric("Outstanding supplier invoices", f"€{payables:,.2f}")
         st.write(f"**Bank matching:** {len(demo.reconciliation) - len(exceptions)} of {len(demo.reconciliation)} references matched")
 
-    st.markdown("#### Items needing attention")
+    st.markdown("#### Priority investigation")
     if exceptions:
         for item in exceptions:
             st.warning(f"{item.reference}: {item.status.replace('_', ' ').title()} — review in Bank reconciliation")
     else:
         st.success("No bank reconciliation exceptions.")
-    st.markdown("#### Follow the workflow")
-    st.write("Invoices → payment allocations → bank matching → financial reporting → close controls")
+    st.markdown("#### What happens next")
+    st.write("**1. Reconcile:** identify the bank-only €12 entry.  **2. Investigate:** record an exception case.  **3. Review:** demonstrate a separate maker/checker decision.  **4. Report:** leave the ledger unchanged until supported evidence exists.")
     st.caption("Figures reflect the fixed fictional October scenario. Charts are descriptive, not forecasts.")
 
-    with st.expander("Start here: a 3-minute reviewer walkthrough", expanded=True):
+    with st.expander("Optional: detailed 3-minute reviewer walkthrough", expanded=False):
         st.markdown("""
 **1. Overview (30 seconds).** Review revenue, expenses, profit and the flagged bank exception.
 
@@ -135,6 +137,7 @@ with tab2:
 
 with tab3:
     st.subheader("Bank reconciliation")
+    st.caption("02 / 05 · Match bank references to posted settlements. Unmatched entries remain exceptions, not automatic journals.")
     rows = [{
         "Reference": item.reference,
         "Result": item.status.replace("_", " ").title(),
@@ -165,6 +168,7 @@ with tab3:
 
 with tab4:
     st.subheader("Financial statements")
+    st.caption("05 / 05 · Reconcile the financial story back to posted journals and the trial balance.")
     pnl = demo.profit_and_loss
     balance = demo.balance_sheet
     left, right = st.columns(2)
@@ -316,6 +320,7 @@ with tab7:
 
 with tab8:
     st.subheader("Exception case management")
+    st.caption("03 / 05 · Track investigation decisions without altering financial balances.")
     st.info("Fictional, session-only case tracking. Marking a case resolved does not post accounting entries or change bank reconciliation.")
     if "exception_cases" not in st.session_state:
         st.session_state.exception_cases = {
@@ -456,6 +461,7 @@ with tab11:
 
 with tab12:
     st.subheader("Approvals and operational audit history")
+    st.caption("04 / 05 · Demonstrate a fictional maker-checker review and trace its session events.")
     st.warning("Fictional maker-checker demonstration only. User-entered actor names are not authenticated. Records are session-only, not tamper-proof, and decisions do not post to the ledger.")
     if "approval_register" not in st.session_state:
         st.session_state.approval_register = ApprovalRegister()
