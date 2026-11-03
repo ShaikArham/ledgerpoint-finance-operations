@@ -69,3 +69,21 @@ def test_no_ledger_side_effect():
                                decision="Approved", note="Checked")
     assert reviewed.requests[0].status == "Approved"
     assert len(book.ledger.history) == before
+
+def test_review_request_id_case_insensitive_and_canonical_event():
+    result = review_approval(sample(), request_id="apr-001", actor="Checker",
+                             decision="Approved", note="Checked")
+    assert result.requests[0].status == "Approved"
+    assert result.events[-1].request_id == "APR-001"
+
+def test_blank_review_request_id_rejected():
+    with pytest.raises(ValueError, match="Request ID"):
+        review_approval(sample(), request_id="  ", actor="Checker",
+                        decision="Approved", note="Checked")
+
+def test_rejected_request_cannot_be_approved_later():
+    rejected = review_approval(sample(), request_id="APR-001", actor="Checker",
+                               decision="Rejected", note="Insufficient evidence")
+    with pytest.raises(ValueError, match="already"):
+        review_approval(rejected, request_id="APR-001", actor="Other",
+                        decision="Approved", note="Override")
