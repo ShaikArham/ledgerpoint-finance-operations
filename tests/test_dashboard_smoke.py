@@ -39,3 +39,9 @@ def test_approvals_audit_tab_visible():
     app = AppTest.from_file(APP, default_timeout=30).run()
     assert not app.exception
     assert any("Approvals and operational audit history" in heading.value for heading in app.subheader)
+
+def test_reviewer_story_visible():
+    app = AppTest.from_file(APP, default_timeout=30).run()
+    assert not app.exception
+    assert any("LedgerPoint" in heading.value for heading in app.title)
+    assert any("Priority investigation" in heading.value for heading in app.markdown)
