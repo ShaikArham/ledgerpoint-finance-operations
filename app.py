@@ -22,6 +22,7 @@ st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="ðŸ“
 st.markdown("""
 <style>
 .block-container {max-width: 1180px; padding-top: 2rem}
+@media (max-width: 640px) {.block-container {padding: 1rem .75rem 2rem; max-width: 100%}}
 h1, h2, h3 {letter-spacing: -.025em}
 [data-testid="stMetric"] {background: #f3f6fa; border: 1px solid #e1e8f0; padding: 16px; border-radius: 12px}
 </style>
