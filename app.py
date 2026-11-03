@@ -12,6 +12,7 @@ from ledgerpoint.triage import investigate
 from ledgerpoint.receivables import invoice_positions
 from ledgerpoint.manual_entry import post_manual
 from ledgerpoint.csv_staging import stage_csv, csv_export, SCHEMAS, detect_csv_kind
+from ledgerpoint.cases import create_case, update_case, STATUSES, PRIORITIES
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -27,8 +28,8 @@ st.info("Educational demonstration. Not affiliated with DataPoint Ireland. VAT a
 
 demo = build_demo()
 book = demo.book
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
+    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases"
 ])
 
 with tab1:
@@ -306,3 +307,48 @@ with tab7:
             if not result.errors:
                 st.success("All uploaded rows passed staging validation.")
     st.caption("Staging detects duplicates within the uploaded file only. It does not compare against existing ledger records or verify bank authenticity.")
+
+with tab8:
+    st.subheader("Exception case management")
+    st.info("Fictional, session-only case tracking. Marking a case resolved does not post accounting entries or change bank reconciliation.")
+    if "exception_cases" not in st.session_state:
+        st.session_state.exception_cases = {
+            f"CASE-{i:03d}": create_case(f"CASE-{i:03d}", item.reference, item.status)
+            for i, item in enumerate((x for x in demo.reconciliation if x.status != "matched"), start=1)
+        }
+    cases = st.session_state.exception_cases
+    st.metric("Unresolved cases", sum(case.status != "Resolved" for case in cases.values()))
+    if cases:
+        st.dataframe([{"Case": case.case_id, "Reference": case.reference,
+                       "Exception": case.exception_type, "Priority": case.priority,
+                       "Status": case.status, "Owner": case.owner}
+                      for case in cases.values()], width="stretch", hide_index=True)
+        case_id = st.selectbox("Select case", list(cases))
+        case = cases[case_id]
+        with st.form("case_update"):
+            status = st.selectbox("Case status", STATUSES, index=STATUSES.index(case.status))
+            priority = st.selectbox("Priority", PRIORITIES, index=PRIORITIES.index(case.priority))
+            owner = st.text_input("Owner", value=case.owner)
+            note = st.text_area("Investigation note", placeholder="Describe the evidence checked and next action")
+            resolution = st.text_area("Resolution evidence (required when resolving)", value=case.resolution)
+            submitted = st.form_submit_button("Save case update")
+        if submitted:
+            try:
+                cases[case_id] = update_case(case, status=status, priority=priority,
+                                             owner=owner, note=note, resolution=resolution)
+            except ValueError as exc:
+                st.error(str(exc))
+            else:
+                st.success("Case updated in this session. Ledger and reconciliation unchanged.")
+                st.rerun()
+        st.markdown("#### Case activity history")
+        if case.history:
+            st.dataframe([{"Date": event.when, "Action": event.action, "Note": event.note}
+                          for event in case.history], width="stretch", hide_index=True)
+        else:
+            st.caption("No case updates recorded yet.")
+        if st.button("Reset fictional cases", key="reset_exception_cases"):
+            del st.session_state.exception_cases
+            st.rerun()
+    else:
+        st.success("No reconciliation exceptions in the fictional baseline.")
