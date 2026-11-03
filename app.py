@@ -11,6 +11,7 @@ from ledgerpoint.reconciliation import reconciliation_summary
 from ledgerpoint.triage import investigate
 from ledgerpoint.receivables import invoice_positions
 from ledgerpoint.manual_entry import post_manual
+from ledgerpoint.csv_staging import stage_csv, csv_export, SCHEMAS
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -26,8 +27,8 @@ st.info("Educational demonstration. Not affiliated with DataPoint Ireland. VAT a
 
 demo = build_demo()
 book = demo.book
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging"
 ])
 
 with tab1:
@@ -249,3 +250,48 @@ with tab6:
     if st.button("Reset sandbox to baseline", key="reset_manual_sandbox"):
         st.session_state.manual_sandbox = deepcopy(book.ledger)
         st.rerun()
+
+with tab7:
+    st.subheader("CSV upload and quality checks")
+    st.info("Upload fictional data for validation only. Nothing is posted to the ledger or sent to a bank.")
+    import_type = st.radio("Import type", ["invoices", "bank"], horizontal=True,
+                           format_func=lambda value: "Invoices" if value == "invoices" else "Bank transactions")
+    columns = SCHEMAS[import_type]
+    st.caption("Required columns: " + ", ".join(columns))
+    sample = (
+        "invoice_id,kind,party_id,issue_date,due_date,net_amount,vat_rate\\n"
+        "DEMO-001,sales,C-001,2026-10-05,2026-11-04,100.00,0.23\\n"
+        "DEMO-001,sales,C-001,2026-10-05,2026-11-04,100.00,0.23\\n"
+        if import_type == "invoices" else
+        "reference,date,amount\\nBANK-001,2026-10-15,500.00\\n"
+        "BANK-001,2026-10-16,500.00\\n"
+    ).replace("\\n", "\n")
+    st.download_button("Download sample CSV", sample, file_name=f"ledgerpoint-{import_type}-sample.csv",
+                       mime="text/csv", key=f"sample_{import_type}")
+    upload = st.file_uploader("Choose a UTF-8 CSV file (maximum 1 MB, 2,000 rows)",
+                              type=["csv"], key=f"staging_{import_type}")
+    if upload is not None:
+        try:
+            result = stage_csv(upload.getvalue(), import_type)
+        except ValueError as exc:
+            st.error(f"Import rejected: {exc}")
+        else:
+            one, two, three = st.columns(3)
+            one.metric("Rows examined", result.total_rows)
+            two.metric("Valid rows", len(result.clean))
+            three.metric("Rejected rows", len(result.errors))
+            if result.clean:
+                st.markdown("#### Validated preview")
+                st.dataframe(list(result.clean), width="stretch", hide_index=True)
+                st.download_button("Download cleaned CSV", csv_export(result.clean, columns),
+                                   file_name=f"ledgerpoint-{import_type}-clean.csv",
+                                   mime="text/csv", key=f"clean_{import_type}")
+            if result.errors:
+                st.markdown("#### Rows needing correction")
+                st.dataframe(list(result.errors), width="stretch", hide_index=True)
+                st.download_button("Download error report", csv_export(result.errors, ("row", "reason")),
+                                   file_name=f"ledgerpoint-{import_type}-errors.csv",
+                                   mime="text/csv", key=f"errors_{import_type}")
+            if not result.errors:
+                st.success("All uploaded rows passed staging validation.")
+    st.caption("Staging detects duplicates within the uploaded file only. It does not compare against existing ledger records or verify bank authenticity.")
