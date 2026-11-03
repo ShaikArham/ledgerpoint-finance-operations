@@ -67,3 +67,15 @@ The available local test environment has pytest but not Streamlit; external GitH
 **New evidence path:** The CI workflow now uploads `pytest-results.xml` as an Actions artifact after the test step (if a result file exists). This enables subsequent inspection but does not prove the workflow has executed successfully.
 
 **Release decision: NOT SIGNED OFF.** All Workstreams 9–14 have source and test coverage committed; Workstream 15 remains incomplete until current GitHub Actions, deployment, and responsive end-to-end evidence are reviewed.
+
+## QA verification attempt — draft PR #6
+
+Created draft PR [#6](https://github.com/ShaikArham/ledgerpoint-finance-operations/pull/6) from `qa/workstream15-ci-verification` into `main` to trigger a pull-request workflow. Its only code change is a regression asserting failed self-review leaves the approval register unchanged. **Unmerged pending a confirmed green test result.**
+
+The first commit-associated pull-request workflow lookup returned an empty run list. No conclusion is inferred. GitHub Actions run status and logs remain unverified.
+
+Local environment check repeated: `git ls-remote` failed DNS resolution for github.com; Python has pytest 9.0.2 but no Streamlit package. Consequently neither a full local test run nor browser/mobile rendering could be completed.
+
+External page inspection attempts for the Streamlit app and GitHub Actions page returned disabled fetch errors. This is **not** evidence of a broken deployment. It is an access limitation.
+
+Release remains **NOT SIGNED OFF**. Do not merge PR #6 or represent the application as tested until CI and live browser evidence are available.
