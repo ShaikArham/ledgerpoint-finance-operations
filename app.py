@@ -29,15 +29,53 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 
 with tab1:
-    st.subheader("October 2026 financial overview")
+    st.subheader("October 2026 · Executive overview")
     a, b, c, d = st.columns(4)
-    a.markdown(f"**Revenue**\n\n### €{demo.october.revenue:,.2f}")
-    b.markdown(f"**Expenses**\n\n### €{demo.october.expenses:,.2f}")
-    c.markdown(f"**Net profit**\n\n### €{demo.october.profit:,.2f}")
-    d.markdown(f"**Reconciliation exceptions**\n\n### {sum(item.status != 'matched' for item in demo.reconciliation)}")
-    st.markdown("### How the workflow connects")
-    st.write("Invoice validation → double-entry posting → payment allocation → bank matching → financial reporting")
-    st.write("The demo includes a partially paid customer invoice, a settled supplier invoice and an unmatched bank transaction.")
+    a.metric("Revenue", f"€{demo.october.revenue:,.2f}")
+    b.metric("Expenses", f"€{demo.october.expenses:,.2f}")
+    c.metric("Net profit", f"€{demo.october.profit:,.2f}")
+    exceptions = [item for item in demo.reconciliation if item.status != "matched"]
+    d.metric("Bank exceptions", len(exceptions))
+
+    st.markdown("#### Financial snapshot")
+    left, right = st.columns(2)
+    with left:
+        st.bar_chart({"Revenue": float(demo.october.revenue),
+                      "Expenses": float(demo.october.expenses),
+                      "Net profit": float(demo.october.profit)})
+        st.caption("October 2026 fictional profit-and-loss amounts in EUR.")
+    with right:
+        open_invoices = invoice_positions(book, date(2026, 10, 31))
+        receivables = sum((p.outstanding for p in open_invoices if p.kind == "sales"), Decimal("0.00"))
+        payables = sum((p.outstanding for p in open_invoices if p.kind == "purchase"), Decimal("0.00"))
+        st.metric("Outstanding customer invoices", f"€{receivables:,.2f}")
+        st.metric("Outstanding supplier invoices", f"€{payables:,.2f}")
+        st.write(f"**Bank matching:** {len(demo.reconciliation) - len(exceptions)} of {len(demo.reconciliation)} references matched")
+
+    st.markdown("#### Items needing attention")
+    if exceptions:
+        for item in exceptions:
+            st.warning(f"{item.reference}: {item.status.replace('_', ' ').title()} — review in Bank reconciliation")
+    else:
+        st.success("No bank reconciliation exceptions.")
+    st.markdown("#### Follow the workflow")
+    st.write("Invoices → payment allocations → bank matching → financial reporting → close controls")
+    st.caption("Figures reflect the fixed fictional October scenario. Charts are descriptive, not forecasts.")
+
+    with st.expander("Start here: a 3-minute reviewer walkthrough", expanded=True):
+        st.markdown("""
+**1. Overview (30 seconds).** Review revenue, expenses, profit and the flagged bank exception.
+
+**2. Invoices (45 seconds).** Find SALE-001, its €730 outstanding balance, and change the reporting date to see invoice ageing.
+
+**3. Bank reconciliation (60 seconds).** Select UNKNOWN-001 and read why the €12 outgoing bank transaction remains unmatched. No ledger entry is created.
+
+**4. Financial reports (30 seconds).** Review the simplified statements and download the trial balance.
+
+**5. Controls (30 seconds).** Review the close-readiness checks and why the period remains open.
+
+**What this demonstrates:** SQL/Python-style validation thinking, financial workflow modelling, exception handling and clear operational reporting. It does not represent professional accounting experience or a production accounting system.
+""")
 
 with tab2:
     st.subheader("Sales and purchase invoice register")
