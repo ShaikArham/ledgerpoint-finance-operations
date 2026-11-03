@@ -13,6 +13,7 @@ from ledgerpoint.receivables import invoice_positions
 from ledgerpoint.manual_entry import post_manual
 from ledgerpoint.csv_staging import stage_csv, csv_export, SCHEMAS, detect_csv_kind
 from ledgerpoint.cases import create_case, update_case, STATUSES, PRIORITIES
+from ledgerpoint.budget import parse_budget, compare_budget, forecast
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -28,8 +29,8 @@ st.info("Educational demonstration. Not affiliated with DataPoint Ireland. VAT a
 
 demo = build_demo()
 book = demo.book
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
-    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases", "Budget & forecast"
 ])
 
 with tab1:
@@ -352,3 +353,36 @@ with tab8:
             st.rerun()
     else:
         st.success("No reconciliation exceptions in the fictional baseline.")
+
+with tab9:
+    st.subheader("Budget versus actual · October 2026")
+    st.caption("Illustrative management budget. Actuals come from fictional posted journals; budgets and scenarios do not change the ledger.")
+    with st.form("budget_comparison"):
+        revenue_input = st.text_input("Budgeted revenue (€)", value="1200.00")
+        expense_input = st.text_input("Budgeted expenses (€)", value="250.00")
+        compare = st.form_submit_button("Calculate budget variances")
+    if compare:
+        try:
+            st.session_state.budget_values = (parse_budget(revenue_input), parse_budget(expense_input))
+        except ValueError as exc:
+            st.error(str(exc))
+    if "budget_values" in st.session_state:
+        budget = compare_budget(demo.october, *st.session_state.budget_values)
+        st.dataframe([
+            {"Metric": "Revenue", "Actual (€)": float(budget.revenue_actual),
+             "Budget (€)": float(budget.revenue_budget), "Variance (€)": float(budget.revenue_variance)},
+            {"Metric": "Expenses", "Actual (€)": float(budget.expense_actual),
+             "Budget (€)": float(budget.expense_budget), "Variance (€)": float(budget.expense_variance)},
+            {"Metric": "Profit", "Actual (€)": float(budget.profit_actual),
+             "Budget (€)": float(budget.profit_budget), "Variance (€)": float(budget.profit_variance)},
+        ], width="stretch", hide_index=True)
+        st.caption("Variance = actual minus budget. Positive expense variance means overspending; positive revenue/profit variance means above budget.")
+    st.markdown("#### Scenario forecast")
+    revenue_change = st.slider("Revenue change (%)", -100, 200, 10, key="forecast_revenue")
+    expense_change = st.slider("Expense change (%)", -100, 200, 20, key="forecast_expense")
+    scenario = forecast(demo.october, revenue_change, expense_change)
+    a, b, c = st.columns(3)
+    a.metric("Scenario revenue", f"€{scenario.revenue:,.2f}")
+    b.metric("Scenario expenses", f"€{scenario.expenses:,.2f}")
+    c.metric("Scenario profit", f"€{scenario.profit:,.2f}", delta=f"€{scenario.profit - demo.october.profit:+,.2f} vs actual")
+    st.caption("A simple percentage what-if model, not a predictive statistical forecast or financial advice.")
