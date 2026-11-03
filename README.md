@@ -8,11 +8,11 @@ LedgerPoint is an independent portfolio work sample demonstrating how invoice pr
 
 ## Current workstream status (November 2026)
 
-Workstreams 1–8 were implemented earlier. Workstreams 9–13 are committed in the repository, including CSV staging, exception case management, budget scenarios, cash movement and a fictional payroll demonstration.
+Workstreams 1–8 were implemented earlier. Workstreams 9–14 are committed in the repository, including CSV staging, exception case management, budget scenarios, cash movement and a fictional payroll demonstration, and session-only maker-checker approvals with activity history.
 
-**Verification limitation:** GitHub source and commits have been inspected, but a passing current pytest run, GitHub Actions workflow and deployed Streamlit end-to-end tests have **not** been independently confirmed for Workstreams 9–13. Treat these features as implemented, not QA-signed-off. Older test counts elsewhere in this README refer only to earlier project phases.
+**Verification limitation:** GitHub source and commits have been inspected, but a passing current pytest run, GitHub Actions workflow and deployed Streamlit end-to-end tests have **not** been independently confirmed for Workstreams 9–14. Treat these features as implemented, not QA-signed-off. Older test counts elsewhere in this README refer only to earlier project phases.
 
-**Payroll disclaimer:** The payroll tab uses a user-entered *fictional deduction percentage*. It does not calculate Irish PAYE, USC, PRSI, pensions or tax credits, and is not suitable for payroll processing or statutory compliance.
+**Approval/audit disclaimer:** The approvals tab uses fictional, self-entered actors and session-only append-style events. It has no authentication, permanent storage, cryptographic integrity guarantees or real financial authorisation. Approvals never post transactions.\n\n**Payroll disclaimer:** The payroll tab uses a user-entered *fictional deduction percentage*. It does not calculate Irish PAYE, USC, PRSI, pensions or tax credits, and is not suitable for payroll processing or statutory compliance.
 
 ## What you can explore
 
