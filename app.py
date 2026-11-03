@@ -8,6 +8,7 @@ from ledgerpoint.exports import trial_balance_csv, reconciliation_csv
 from ledgerpoint.management import month_end_checks
 from ledgerpoint.reconciliation import reconciliation_summary
 from ledgerpoint.triage import investigate
+from ledgerpoint.receivables import invoice_positions
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -57,6 +58,30 @@ with tab2:
         })
     st.dataframe(invoice_rows, width="stretch", hide_index=True)
     st.caption("Balances are computed from posted fictional invoices and payment allocations.")
+    st.markdown("#### Invoice ageing and payment follow-up")
+    as_of = st.date_input("Reporting date", value=date(2026, 10, 31),
+                          min_value=date(2026, 10, 1), max_value=date(2027, 12, 31),
+                          key="invoice_ageing_date")
+    positions = invoice_positions(book, as_of)
+    kinds = st.multiselect("Invoice type", ["sales", "purchase"], default=["sales", "purchase"],
+                           format_func=lambda x: x.title(), key="ageing_types")
+    filtered = [p for p in positions if p.kind in kinds]
+    sales_due = sum((p.outstanding for p in filtered if p.kind == "sales"), Decimal("0.00"))
+    purchase_due = sum((p.outstanding for p in filtered if p.kind == "purchase"), Decimal("0.00"))
+    overdue = sum((p.outstanding for p in filtered if p.days_overdue > 0), Decimal("0.00"))
+    x, y, z = st.columns(3)
+    x.metric("Customer receivables", f"€{sales_due:,.2f}")
+    y.metric("Supplier payables", f"€{purchase_due:,.2f}")
+    z.metric("Overdue balance", f"€{overdue:,.2f}")
+    st.dataframe([{
+        "Invoice": p.reference, "Party": p.party, "Type": p.kind.title(),
+        "Due date": p.due_date.isoformat(), "Outstanding (€)": float(p.outstanding),
+        "Days overdue": p.days_overdue, "Ageing bucket": p.bucket,
+        "Suggested follow-up": p.action,
+    } for p in filtered], width="stretch", hide_index=True)
+    if not filtered:
+        st.info("No open invoices match the selected reporting date and type.")
+    st.caption("Snapshot amounts include payments recorded on or before the selected date. Suggested follow-ups are illustrative, not actions taken.")
 
 with tab3:
     st.subheader("Bank reconciliation")
