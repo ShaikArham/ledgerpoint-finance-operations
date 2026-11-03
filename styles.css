@@ -75,3 +75,31 @@ body{letter-spacing:-.008em;background:#f4f6f7}
 }
 @media(min-width:901px){.mobile-nav{display:none}}
 @media(prefers-reduced-motion:reduce){.mobile-nav{scroll-behavior:auto}}
+
+
+/* Definitive mobile navigation fix: the nav now lives BEFORE the header and main. */
+@media(max-width:900px){
+.main-wrap{display:flex;flex-direction:column;min-width:0}
+.mobile-nav{order:0;position:sticky!important;top:0!important;bottom:auto!important;z-index:100!important;display:flex!important;width:100%;max-width:100vw;min-height:62px;overflow-x:auto;align-items:center;justify-content:flex-start;gap:6px;padding:8px 14px;background:#102b3b;box-shadow:0 4px 18px rgba(8,29,42,.14);-webkit-overflow-scrolling:touch}
+.mobile-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;white-space:nowrap;padding:10px 15px;border-radius:5px;font-size:12px;font-weight:650;color:#d8e7e9}
+.mobile-nav a.active{background:#b4e9d7;color:#0c2b34}
+.topbar{order:1;position:relative!important;top:auto!important;z-index:1;box-shadow:none}
+.main-wrap>main{order:2}
+.sidebar{display:none!important}
+}
+@media(max-width:560px){
+.mobile-nav{min-height:58px;padding:7px 10px;gap:4px}
+.mobile-nav a{font-size:11px;padding:10px 12px}
+.topbar{height:58px}
+.top-title{font-size:11px}
+.hero{padding:38px 20px 30px}
+.hero h1{letter-spacing:-.06em}
+.hero-evidence{box-shadow:0 14px 35px #061c2940}
+}
+@media(min-width:901px){.mobile-nav{display:none!important}.sidebar{display:flex!important}}
+/* Less visual noise, better legibility */
+.hero:before{opacity:.15}
+.hero-evidence{transform:none!important}
+.kpi,.panel{border:1px solid #e3e9ec}
+.application-note{box-shadow:none}
+.top-action{display:none}
