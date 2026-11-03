@@ -35,8 +35,10 @@ class ControlledLedger:
              entries: list[Entry], reversal_of: str | None = None) -> PostedJournal:
         if not isinstance(posting_date, date) or isinstance(posting_date, __import__("datetime").datetime):
             raise ValueError("Posting date must be a calendar date")
-        if not journal_id.strip() or any(j.journal_id == journal_id for j in self._history):
-            raise ValueError("Journal ID missing or already used")
+        if not journal_id.strip():
+            raise ValueError("Journal ID is required")
+        if any(j.journal_id == journal_id for j in self._history):
+            raise ValueError(f"Journal ID {journal_id} already used")
         if not description.strip():
             raise ValueError("Description required")
         if posting_date.strftime("%Y-%m") in self._closed_periods:
