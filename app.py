@@ -29,11 +29,10 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 with tab1:
     st.subheader("October 2026 financial overview")
     a, b, c, d = st.columns(4)
-    a.metric("Revenue", f"€{demo.october.revenue:,.2f}")
-    b.metric("Expenses", f"€{demo.october.expenses:,.2f}")
-    c.metric("Net profit", f"€{demo.october.profit:,.2f}")
-    d.metric("Reconciliation exceptions",
-             sum(item.status != "matched" for item in demo.reconciliation))
+    a.markdown(f"**Revenue**\n\n### €{demo.october.revenue:,.2f}")
+    b.markdown(f"**Expenses**\n\n### €{demo.october.expenses:,.2f}")
+    c.markdown(f"**Net profit**\n\n### €{demo.october.profit:,.2f}")
+    d.markdown(f"**Reconciliation exceptions**\n\n### {sum(item.status != 'matched' for item in demo.reconciliation)}")
     st.markdown("### How the workflow connects")
     st.write("Invoice validation → double-entry posting → payment allocation → bank matching → financial reporting")
     st.write("The demo includes a partially paid customer invoice, a settled supplier invoice and an unmatched bank transaction.")
