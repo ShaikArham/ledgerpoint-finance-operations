@@ -87,3 +87,11 @@ def test_rejected_request_cannot_be_approved_later():
     with pytest.raises(ValueError, match="already"):
         review_approval(rejected, request_id="APR-001", actor="Other",
                         decision="Approved", note="Override")
+
+def test_rejected_self_review_does_not_mutate_register():
+    original = sample()
+    with pytest.raises(ValueError, match="own request"):
+        review_approval(original, request_id="APR-001", actor="Maker",
+                        decision="Rejected", note="Invalid review")
+    assert len(original.events) == 1
+    assert original.requests[0].status == "Pending"
