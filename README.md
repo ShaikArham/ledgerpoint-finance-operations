@@ -1,5 +1,20 @@
 # LedgerPoint
 
+## New standalone website (HTML / CSS / JavaScript)
+
+The repository now contains a separate premium, read-only finance operations case-study frontend:
+
+- `index.html` — accessible single-page structure, executive overview, reconciliation, invoices, financial performance and case study
+- `styles.css` — responsive navy/teal design system, KPI cards, animated hero and mobile navigation
+- `script.js` — hash-based navigation and view switching, without external libraries
+- `assets/logo.svg` — original LedgerPoint vector logo
+- `.github/workflows/deploy-website.yml` — GitHub Pages deployment workflow (requires GitHub Pages to be enabled with GitHub Actions as source)
+
+**Separate demos:** The standalone website is a curated fictional case study. The original `app.py` Streamlit application and its interactive Python finance controls remain available at https://ledgerpoint-finance-operations.streamlit.app/.
+
+**Verification:** The HTML/CSS/JS website is committed but browser rendering, mobile visual QA and public GitHub Pages deployment are not yet independently confirmed. The prior 209-test GitHub Actions result applies to an earlier Python PR commit and does not certify the new frontend.
+
+
 **A fictional finance-operations simulator built with Python and Streamlit.**
 
 LedgerPoint is an independent portfolio work sample demonstrating how invoice processing, double-entry accounting, payment allocation, bank reconciliation and financial reporting can work together in one auditable-in-process workflow.
