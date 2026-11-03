@@ -54,7 +54,7 @@ with tab2:
             "Outstanding (€)": float(outstanding),
             "Status": "Settled" if outstanding == 0 else "Outstanding",
         })
-    st.dataframe(invoice_rows, use_container_width=True, hide_index=True)
+    st.dataframe(invoice_rows, width="stretch", hide_index=True)
     st.caption("Balances are computed from posted fictional invoices and payment allocations.")
 
 with tab3:
@@ -65,7 +65,7 @@ with tab3:
         "Ledger amount (€)": None if item.ledger_amount is None else float(item.ledger_amount),
         "Bank amount (€)": None if item.bank_amount is None else float(item.bank_amount),
     } for item in demo.reconciliation]
-    st.dataframe(rows, use_container_width=True, hide_index=True)
+    st.dataframe(rows, width="stretch", hide_index=True)
     counts = reconciliation_summary(list(demo.reconciliation))
     st.write(f"Matched: **{counts['matched']}** · Exceptions: **{len(rows) - counts['matched']}**")
     st.warning("UNKNOWN-001 is a bank-only transaction. Investigate it before treating the bank statement as fully reconciled.")
@@ -93,7 +93,7 @@ with tab4:
     tb = trial_balance(book.ledger)
     st.dataframe([{"Account": r.code, "Name": r.name, "Debit (€)": float(r.debit),
                    "Credit (€)": float(r.credit)} for r in tb],
-                 use_container_width=True, hide_index=True)
+                 width="stretch", hide_index=True)
     st.download_button("Download trial balance CSV", trial_balance_csv(tb),
                        file_name="ledgerpoint-trial-balance.csv", mime="text/csv")
 
