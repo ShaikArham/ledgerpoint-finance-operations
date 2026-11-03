@@ -1,0 +1,5 @@
+# Streamlit Community Cloud dependencies
+# The repository's Python package is installed from the checked-out source.
+-e .
+streamlit>=1.40,<2
+pytest>=8,<10
