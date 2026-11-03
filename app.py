@@ -21,13 +21,23 @@ from ledgerpoint.approvals import ApprovalRegister, request_approval, review_app
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
 <style>
-.block-container {max-width: 1180px; padding-top: 2rem}
-@media (max-width: 640px) {.block-container {padding: 1rem .75rem 2rem; max-width: 100%} [data-testid="stMetric"] {padding: 10px}}
-h1, h2, h3 {letter-spacing: -.025em}
-[data-testid="stMetric"] {background: #f3f6fa; border: 1px solid #e1e8f0; padding: 16px; border-radius: 12px}
+:root {--dp-ink:#183447;--dp-teal:#147f84}
+.block-container {max-width: 1220px; padding-top: 1.4rem}
+h1,h2,h3 {letter-spacing:-.035em;color:var(--dp-ink)}
+[data-testid="stMetric"] {background:#f0f8f7;border:1px solid #d5e8e5;padding:16px;border-radius:14px;min-width:0}
+[data-testid="stMetricValue"] {color:var(--dp-ink)}
+[data-baseweb="tab-list"] {overflow-x:auto;scrollbar-width:thin}
+[data-baseweb="tab"] {white-space:nowrap;flex-shrink:0}
+.dp-hero {background:linear-gradient(115deg,#183447,#176e74);padding:26px;border-radius:18px;color:#fff;margin:6px 0 18px}
+.dp-hero h2 {color:#fff!important;margin:8px 0;font-size:1.65rem}
+.dp-hero p {color:#e5f3f1;line-height:1.6;margin:0}
+.dp-hero small {display:block;color:#c9e7e4;margin-top:12px}
+.dp-kicker {text-transform:uppercase;letter-spacing:.12em;color:#b9e8df;font-size:.75rem;font-weight:700}
+@media(max-width:640px){.block-container{padding:1rem .7rem 2rem;max-width:100%}[data-testid="stMetric"]{padding:10px}.dp-hero{padding:18px;border-radius:14px}.dp-hero h2{font-size:1.3rem}}
 </style>
 """, unsafe_allow_html=True)
 st.title("LedgerPoint")
+st.markdown("""<div class="dp-hero"><div class="dp-kicker">Connect the dots · Finance operations</div><h2>From transactions to better decisions</h2><p>Explore management reporting, bank reconciliation, cash flow and operational exceptions through a fictional business case.</p><small>Independent portfolio concept inspired by DataPoint Ireland’s published services. Not commissioned or endorsed.</small></div>""", unsafe_allow_html=True)
 st.caption("From invoice to insight · Interactive fictional finance-operations case study")
 st.info("Independent portfolio demonstration using fictional data. Not affiliated with DataPoint Ireland. VAT and payroll figures are illustrative, not tax or payroll advice.")
 st.markdown("**The case:** A fictional €12 bank debit has no matching ledger entry. Trace it from the executive dashboard through reconciliation, investigation and a maker-checker review, without inventing an accounting posting.")
@@ -40,7 +50,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10, tab11, tab12 = st.t
 ])
 
 with tab1:
-    st.subheader("October 2026 · Executive overview")
+    st.subheader("Business performance · October 2026")
     st.caption("01 / 05 · Establish the financial position and identify the exception requiring attention.")
     a, b, c, d = st.columns(4)
     a.metric("Revenue", f"€{demo.october.revenue:,.2f}")
