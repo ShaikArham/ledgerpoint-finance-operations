@@ -36,7 +36,30 @@ def _money(raw: str, label: str, *, allow_negative: bool = False) -> Decimal:
         raise ValueError(f"{label}: must not be zero")
     return value
 
+def detect_csv_kind(data: bytes) -> str:
+    """Recognise supported CSV headers without guessing missing accounting fields."""
+    if len(data) > MAX_BYTES:
+        raise ValueError("File exceeds 1 MB limit")
+    try:
+        text = data.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        raise ValueError("CSV must use UTF-8 encoding") from None
+    try:
+        header = next(csv.reader(io.StringIO(text, newline=""), strict=True), None)
+    except csv.Error as exc:
+        raise ValueError(f"Malformed CSV: {exc}") from None
+    if not header or len(header) != len(set(header)) or any(not name for name in header):
+        raise ValueError("Missing or duplicate CSV column headings")
+    matches = [kind for kind, required in SCHEMAS.items() if set(required).issubset(header)]
+    if len(matches) == 1:
+        return matches[0]
+    if len(matches) > 1:
+        raise ValueError("Ambiguous CSV format; select a specific import type")
+    raise ValueError("Unrecognised CSV columns. Supported formats: invoice intake, bank transactions, LedgerPoint invoice register export")
+
 def stage_csv(data: bytes, kind: str) -> StagingResult:
+    if kind == "auto":
+        kind = detect_csv_kind(data)
     if kind not in SCHEMAS:
         raise ValueError("Unknown import type")
     if len(data) > MAX_BYTES:
