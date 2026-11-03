@@ -15,6 +15,7 @@ from ledgerpoint.csv_staging import stage_csv, csv_export, SCHEMAS, detect_csv_k
 from ledgerpoint.cases import create_case, update_case, STATUSES, PRIORITIES
 from ledgerpoint.budget import parse_budget, compare_budget, forecast
 from ledgerpoint.cashflow import cash_flow, working_capital
+from ledgerpoint.payroll import PayrollInput, calculate_payroll, money
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -30,8 +31,8 @@ st.info("Educational demonstration. Not affiliated with DataPoint Ireland. VAT a
 
 demo = build_demo()
 book = demo.book
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
-    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases", "Budget & forecast", "Cash flow"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10, tab11 = st.tabs([
+    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases", "Budget & forecast", "Cash flow", "Payroll demo"
 ])
 
 with tab1:
@@ -420,3 +421,32 @@ with tab10:
     st.write(f"**Overdue customer balances:** €{wc.overdue_receivables:,.2f}")
     st.write(f"**Overdue supplier balances:** €{wc.overdue_payables:,.2f}")
     st.caption("Net trade working capital = trade receivables minus trade payables. This is not a statutory cash flow statement or a complete working-capital measure.")
+
+with tab11:
+    st.subheader("Illustrative payroll operations")
+    st.warning("Training simulation only. The deduction percentage below is a fictional assumption, NOT Irish PAYE, USC, PRSI, pension, tax credits, or a Revenue-approved payroll calculation. Do not use for real payslips.")
+    with st.form("illustrative_payroll"):
+        employee_id = st.text_input("Fictional employee reference", value="DEMO-EMP-001")
+        hours_text = st.text_input("Hours worked", value="40.00")
+        hourly_text = st.text_input("Hourly pay (€)", value="20.00")
+        deduction_text = st.text_input("Illustrative deduction assumption (%)", value="15.00")
+        submitted = st.form_submit_button("Calculate illustrative payslip")
+    if submitted:
+        try:
+            entry = PayrollInput(
+                employee_id, money(hours_text, "Hours", maximum=Decimal("744")),
+                money(hourly_text, "Hourly pay", maximum=Decimal("10000")),
+                money(deduction_text, "Deduction percentage", maximum=Decimal("100")))
+            st.session_state.illustrative_payslip = calculate_payroll(entry)
+        except ValueError as exc:
+            st.error(str(exc))
+            st.session_state.pop("illustrative_payslip", None)
+    if "illustrative_payslip" in st.session_state:
+        slip = st.session_state.illustrative_payslip
+        a, b, c = st.columns(3)
+        a.metric("Gross pay", f"€{slip.gross:,.2f}")
+        b.metric("Illustrative deduction", f"€{slip.illustrative_deduction:,.2f}")
+        c.metric("Illustrative net pay", f"€{slip.net:,.2f}")
+        st.caption(f"Fictional employee: {slip.employee_id}. No payroll records, tax returns or ledger entries are created.")
+    st.markdown("#### Operational controls demonstrated")
+    st.write("Input validation, decimal rounding, employee-reference checks, gross-to-net reconciliation and clear separation of hypothetical deductions from statutory payroll.")
