@@ -97,3 +97,28 @@ def test_auto_detect_invoice_register():
 def test_auto_detect_unknown_format():
     with pytest.raises(ValueError, match="Unrecognised"):
         stage_csv(b"foo,bar\\na,b\\n".replace(b"\\n", b"\n"), "auto")
+
+def test_spreadsheet_formula_escaped_in_text_export():
+    import csv
+    import io
+    rows = ({"reference": "=1+1", "date": "2026-10-01", "amount": "-12.50"},)
+    output = csv_export(rows, ("reference", "date", "amount"))
+    parsed = next(csv.DictReader(io.StringIO(output)))
+    assert parsed["reference"] == "'=1+1"
+    assert parsed["amount"] == "-12.50"
+
+def test_register_negative_vat_rejected():
+    header = ",".join(("Invoice","Type","Party","Issue date","Due date","Net (€)",
+                       "Illustrative VAT (€)","Gross (€)","Outstanding (€)","Status"))
+    row = "INV-1,Sales,Party,2026-10-01,2026-10-30,100,-1,99,0,Settled"
+    result = stage_csv((header + "\n" + row + "\n").encode(), "invoice_register")
+    assert not result.clean
+    assert len(result.errors) == 1
+
+def test_register_invalid_outstanding_is_row_error():
+    header = ",".join(("Invoice","Type","Party","Issue date","Due date","Net (€)",
+                       "Illustrative VAT (€)","Gross (€)","Outstanding (€)","Status"))
+    row = "INV-1,Sales,Party,2026-10-01,2026-10-30,100,0,100,invalid,Outstanding"
+    result = stage_csv((header + "\n" + row + "\n").encode(), "invoice_register")
+    assert not result.clean
+    assert len(result.errors) == 1
