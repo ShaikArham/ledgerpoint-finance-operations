@@ -1,6 +1,6 @@
 """CSV staging rejects bad inputs and never posts to a ledger."""
 import pytest
-from ledgerpoint.csv_staging import stage_csv, csv_export
+from ledgerpoint.csv_staging import stage_csv, csv_export, detect_csv_kind
 
 HEADER = "invoice_id,kind,party_id,issue_date,due_date,net_amount,vat_rate\n"
 GOOD = "A-1,sales,C-001,2026-10-05,2026-11-04,100.00,0.23\n"
@@ -79,3 +79,21 @@ def test_register_rejects_wrong_totals():
     result = stage_csv(data.encode(), "invoice_register")
     assert len(result.errors) == 1
     assert "must equal gross" in result.errors[0]["reason"]
+
+def test_auto_detect_invoice_intake():
+    assert detect_csv_kind((HEADER + GOOD).encode()) == "invoices"
+    assert len(stage_csv((HEADER + GOOD).encode(), "auto").clean) == 1
+
+def test_auto_detect_bank():
+    data = b"reference,date,amount\\nR1,2026-10-01,5\\n".replace(b"\\n", b"\n")
+    assert detect_csv_kind(data) == "bank"
+
+def test_auto_detect_invoice_register():
+    data = ("Invoice,Type,Party,Issue date,Due date,Net (€),Illustrative VAT (€),Gross (€),Outstanding (€),Status\\n"
+            "SALE-001,Sales,Harbour Design Studio,2026-10-05,2026-11-04,1000,230,1230,730,Outstanding\\n").replace("\\n", "\n").encode("utf-8-sig")
+    assert detect_csv_kind(data) == "invoice_register"
+    assert len(stage_csv(data, "auto").clean) == 1
+
+def test_auto_detect_unknown_format():
+    with pytest.raises(ValueError, match="Unrecognised"):
+        stage_csv(b"foo,bar\\na,b\\n".replace(b"\\n", b"\n"), "auto")
