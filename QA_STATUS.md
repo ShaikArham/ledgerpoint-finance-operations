@@ -105,3 +105,11 @@ Evidence: https://github.com/ShaikArham/ledgerpoint-finance-operations/actions/r
 - Added Streamlit sidebar with five-stage reviewer journey; retained all twelve functional tabs and the fictional accounting scenario.
 - Commit `2215151d712db1627b022792db704962e044f5b9`.
 - **No browser screenshot, mobile viewport render or CI run has yet verified this exact new commit.** The previously verified 209-test pass belongs to an earlier PR commit. Release sign-off remains pending.
+
+## Standalone HTML/CSS/JS website — 2026-11-03
+
+Created `index.html`, `styles.css`, `script.js`, `assets/logo.svg` and a GitHub Pages deployment workflow. The new site is a **read-only fictional portfolio case study** and links to the separate, unchanged interactive Streamlit Python app. Includes keyboard skip link, semantic sections, hash navigation, small-screen bottom navigation, responsive tables and reduced-motion CSS.
+
+**Evidence:** Files were successfully committed through the GitHub connector. No HTML browser runtime, visual mobile screenshot, automated accessibility audit, or deployed GitHub Pages response was observed in this work session. GitHub Pages may require repository Pages settings to select GitHub Actions. Deployment is **configured, not confirmed live**.
+
+The prior GitHub Actions pytest run #75 showed 209 passing tests on the older PR head commit; it does **not** validate these new frontend commits. No test-pass assertion is made for the static website. Release remains not signed off pending deployment/browser evidence.
