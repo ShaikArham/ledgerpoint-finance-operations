@@ -1,5 +1,6 @@
 """LedgerPoint: fictional finance operations interactive demonstration."""
 from datetime import date
+from copy import deepcopy
 from decimal import Decimal
 import streamlit as st
 from ledgerpoint.demo import build_demo
@@ -9,6 +10,7 @@ from ledgerpoint.management import month_end_checks
 from ledgerpoint.reconciliation import reconciliation_summary
 from ledgerpoint.triage import investigate
 from ledgerpoint.receivables import invoice_positions
+from ledgerpoint.manual_entry import post_manual
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -24,8 +26,8 @@ st.info("Educational demonstration. Not affiliated with DataPoint Ireland. VAT a
 
 demo = build_demo()
 book = demo.book
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls"
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox"
 ])
 
 with tab1:
@@ -200,3 +202,50 @@ with tab5:
     st.markdown("#### Scope and limitations")
     st.write("In-memory demonstration only. No real bank integration, payroll submissions, user authentication, persistent audit database or statutory financial reporting.")
     st.markdown("[Review the project source and tests](https://github.com/ShaikArham/ledgerpoint-finance-operations)")
+
+with tab6:
+    st.subheader("Manual journal sandbox")
+    st.info("Practice-only entries in your current browser session. This sandbox is separate from the baseline invoice, bank reconciliation and financial reports. No changes are saved to a database.")
+    if "manual_sandbox" not in st.session_state:
+        st.session_state.manual_sandbox = deepcopy(book.ledger)
+    sandbox = st.session_state.manual_sandbox
+    accounts = list(sandbox.accounts)
+    def account_label(code):
+        return f"{code} · {sandbox.accounts[code].name}"
+    with st.form("manual_journal_form", clear_on_submit=False):
+        journal_id = st.text_input("Unique journal ID", value="MAN-001")
+        posting_date = st.date_input("Posting date", value=date(2026, 10, 22), key="manual_post_date")
+        description = st.text_input("Description", value="Fictional bank charge adjustment")
+        debit_account = st.selectbox("Debit account", accounts, index=accounts.index("5000"),
+                                     format_func=account_label)
+        credit_account = st.selectbox("Credit account", accounts, index=accounts.index("1000"),
+                                      format_func=account_label)
+        amount = st.text_input("Amount (EUR)", value="12.00")
+        submitted = st.form_submit_button("Validate and post to sandbox")
+    if submitted:
+        try:
+            post_manual(sandbox, journal_id, posting_date, description,
+                        debit_account, credit_account, amount)
+        except (ValueError, TypeError) as exc:
+            st.error(f"Not posted: {exc}")
+        else:
+            st.success(f"Journal {journal_id.strip()} posted to this session's sandbox.")
+    st.markdown("#### Sandbox journal history")
+    sandbox_journals = [j for j in sandbox.history if j.journal_id.startswith("MAN-")]
+    st.dataframe([{
+        "Journal": j.journal_id, "Date": j.posting_date.isoformat(),
+        "Description": j.description,
+        "Debit": f"{j.entries[0].account} · €{j.entries[0].debit:,.2f}",
+        "Credit": f"{j.entries[1].account} · €{j.entries[1].credit:,.2f}",
+    } for j in sandbox_journals], width="stretch", hide_index=True)
+    st.markdown("#### Sandbox trial balance")
+    balances = sandbox.trial_balance()
+    st.dataframe([{
+        "Account": account_label(code),
+        "Debit (€)": float(max(value, Decimal("0.00"))),
+        "Credit (€)": float(max(-value, Decimal("0.00"))),
+    } for code, value in balances.items() if value != 0], width="stretch", hide_index=True)
+    st.caption("The sandbox includes the fictional baseline journals plus any manual entries made during this session.")
+    if st.button("Reset sandbox to baseline", key="reset_manual_sandbox"):
+        st.session_state.manual_sandbox = deepcopy(book.ledger)
+        st.rerun()
