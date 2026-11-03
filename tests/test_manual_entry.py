@@ -46,3 +46,21 @@ def test_unknown_account_rejected():
 def test_bad_id_rejected():
     with pytest.raises(ValueError, match="MAN-"):
         post_manual(ControlledLedger(), "INV-001", date(2026, 10, 22), "Adjustment", "5000", "1000", "12")
+
+def test_blank_description_rejected_without_posting():
+    book = ControlledLedger()
+    with pytest.raises(ValueError, match="Description required"):
+        post_manual(book, "MAN-001", date(2026, 10, 22), " ", "5000", "1000", "12")
+    assert not book.history
+
+def test_invalid_amount_does_not_mutate_ledger():
+    book = ControlledLedger()
+    with pytest.raises(ValueError, match="two decimals"):
+        post_manual(book, "MAN-001", date(2026, 10, 22), "Test", "5000", "1000", "12.345")
+    assert not book.history
+
+def test_missing_id_has_specific_message():
+    book = ControlledLedger()
+    with pytest.raises(ValueError, match="MAN-"):
+        post_manual(book, "", date(2026, 10, 22), "Test", "5000", "1000", "12")
+    assert not book.history
