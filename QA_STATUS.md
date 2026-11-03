@@ -89,3 +89,12 @@ Evidence: https://github.com/ShaikArham/ledgerpoint-finance-operations/actions/r
 **Scope:** This is a verified CI pass for the pull-request branch and its exact tested commit, **not** a separate verified CI pass for the latest main-branch commit. Draft PR #6 remains unmerged. The prior statements saying no full pytest pass was available are superseded for this PR commit only.
 
 **Still outstanding:** Live Streamlit startup/browser interactions, mobile visual checks, and confirming the final release/main commit. Remote browser fetch was disabled and the local runtime lacks Streamlit. Release sign-off remains pending those checks.
+
+## DataPoint-inspired presentation update — 2026-11-03
+
+- Added a navy/teal executive hero, softer KPI styling, horizontal tab scrolling and narrow-screen CSS.
+- The theme is **inspired by DataPoint Ireland's public service positioning** (management accounting, business analytics, cash flow and KPI reporting). Colours are design choices, **not verified official brand specifications**.
+- The application explicitly states it is independent and not commissioned or endorsed by DataPoint.
+- Theme commit: `3b02f53d90c300978eaf5ed17057793b8e968d65`.
+- Prior CI evidence of 209 passing tests applies to PR #6 commit `23c378a...`, **not this newer theme commit**.
+- Live appearance, mobile viewport rendering and latest-main CI remain unverified. Release sign-off remains pending.
