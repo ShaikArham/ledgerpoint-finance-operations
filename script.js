@@ -1,17 +1,17 @@
 (() => {
 "use strict";
 const names={guide:"Start here",overview:"Executive overview",reconciliation:"Bank reconciliation",invoices:"Invoice register",performance:"Financial performance","case-study":"Case study","investigation-lab":"Investigation lab"};
-const pages=new Set(["guide","overview","reconciliation","invoices","performance","case-study"]);
+const pages=new Set(["guide","overview","investigation-lab","reconciliation","invoices","performance","case-study"]);
 const views=Array.from(document.querySelectorAll(".view"));
 const links=Array.from(document.querySelectorAll("[data-view]"));
 const reduce=()=>window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function navigate(name,scroll=true){
  const target=names[name]?name:"overview";
- const page=target==="investigation-lab"?"overview":target;
+ const page=target;
  views.forEach(el=>{const active=el.id===page;el.classList.toggle("active",active);el.hidden=!active;});
  links.forEach(a=>{const active=a.dataset.view===page;a.classList.toggle("active",active);if(a.closest("nav")){if(active)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");}});
  document.title="LedgerPoint | "+names[target];
- if(scroll){requestAnimationFrame(()=>{const node=document.getElementById(target);if(node)node.scrollIntoView({behavior:reduce()?"instant":"smooth",block:"start"});});}
+ if(scroll){requestAnimationFrame(()=>{const node=document.getElementById(target);if(node)node.scrollIntoView({behavior:reduce()?"auto":"smooth",block:"start"});});}
 }
 function current(){const hash=decodeURIComponent(location.hash.slice(1));return names[hash]?hash:"overview";}
 document.addEventListener("click",event=>{
