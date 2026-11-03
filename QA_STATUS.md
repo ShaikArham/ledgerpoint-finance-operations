@@ -42,3 +42,12 @@ The available local test environment has pytest but not Streamlit; external GitH
 3. Validate all 12 tabs on desktop and narrow/mobile screens.
 4. Check input boundaries, state resets, CSV export safety, approval state transitions and financial reconciliation invariants.
 5. Correct README descriptions that still refer to older five-tab/read-only phases, and publish a final evidence-based release report.
+
+## Presentation iteration (2026-11-03)
+
+- Executive opening now explains the fictional unmatched €12 debit as the primary case.
+- Added numbered reviewer-stage captions to overview, reconciliation, exception cases, approvals and reporting.
+- Changed the overview to prioritize investigation and next actions.
+- Collapsed the optional long walkthrough and adjusted mobile metric padding.
+- Added a narrative smoke test; it is committed but **not independently executed**.
+- No live mobile screenshot, deployment smoke test or full pytest pass has been independently confirmed.
