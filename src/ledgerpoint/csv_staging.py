@@ -30,7 +30,7 @@ def _money(raw: str, label: str, *, allow_negative: bool = False, allow_zero: bo
         raise ValueError(f"{label}: invalid decimal") from None
     if not value.is_finite() or value.as_tuple().exponent < -2:
         raise ValueError(f"{label}: must be finite with at most two decimal places")
-    if not allow_negative and not allow_zero and value <= 0:
+    if not allow_negative and (value < 0 or (value == 0 and not allow_zero)):
         raise ValueError(f"{label}: must be positive")
     if allow_negative and value == 0:
         raise ValueError(f"{label}: must not be zero")
@@ -149,5 +149,17 @@ def csv_export(rows: tuple[dict[str, str], ...], columns: tuple[str, ...]) -> st
     out = io.StringIO()
     writer = csv.DictWriter(out, fieldnames=columns, extrasaction="ignore")
     writer.writeheader()
-    writer.writerows(rows)
+    for row in rows:
+        safe = {}
+        for column in columns:
+            value = str(row.get(column, ""))
+            # Guard spreadsheet text fields; signed numeric bank amounts remain intact.
+            if column not in ("amount", "net_amount", "vat_rate",
+                              "Net (€)", "Illustrative VAT (€)", "Gross (€)",
+                              "Outstanding (€)") and value.lstrip().startswith(
+                                  ("=", "+", "-", "@", "\t", "\r", "\n")
+                              ):
+                value = "'" + value
+            safe[column] = value
+        writer.writerow(safe)
     return out.getvalue()
