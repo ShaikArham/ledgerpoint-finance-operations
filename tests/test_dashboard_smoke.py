@@ -7,7 +7,7 @@ APP = str(Path(__file__).resolve().parents[1] / "app.py")
 def test_dashboard_loads_without_uncaught_exceptions():
     app = AppTest.from_file(APP, default_timeout=30).run()
     assert not app.exception, [str(error.message) for error in app.exception]
-    assert len(app.tabs) == 9
+    assert len(app.tabs) == 10
 
 def test_manual_journal_form_is_visible():
     app = AppTest.from_file(APP, default_timeout=30).run()
@@ -24,3 +24,8 @@ def test_budget_forecast_tab_visible():
     app = AppTest.from_file(APP, default_timeout=30).run()
     assert not app.exception
     assert any("Budget versus actual" in heading.value for heading in app.subheader)
+
+def test_cash_flow_tab_visible():
+    app = AppTest.from_file(APP, default_timeout=30).run()
+    assert not app.exception
+    assert any("Cash flow and working capital" in heading.value for heading in app.subheader)
