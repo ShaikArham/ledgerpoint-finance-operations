@@ -115,9 +115,23 @@ with tab4:
 with tab5:
     st.subheader("Accounting control checks")
     checks = month_end_checks(book.ledger, "2026-10")
+    st.markdown("#### October close readiness")
+    passed = sum(check.passed for check in checks)
+    st.progress(passed / len(checks), text=f"{passed} of {len(checks)} accounting checks passed")
     for check in checks:
-        st.write(f"{'✅' if check.passed else '⚪'} **{check.name}**: {check.details}")
-    st.caption("An unlocked period is expected in this demonstration. These checks are not a statutory month-end close.")
+        with st.expander(f"{'✅' if check.passed else '⚠️'} {check.name}", expanded=not check.passed):
+            st.write(check.details)
+            if check.name == "Period locked" and not check.passed:
+                st.info("This sample period remains open intentionally. Locking it would require an authorised close action in the accounting engine, not a dashboard checkbox.")
+    exceptions = [item for item in demo.reconciliation if item.status != "matched"]
+    st.markdown("#### Operational review before close")
+    if exceptions:
+        st.warning(f"{len(exceptions)} bank reconciliation exception(s) require investigation before treating this sample as fully reconciled.")
+        for item in exceptions:
+            st.write(f"• **{item.reference}**: {item.status.replace('_', ' ').title()}")
+    else:
+        st.success("No bank reconciliation exceptions in the current sample.")
+    st.caption("Read-only close readiness. This dashboard does not lock periods, clear exceptions, approve entries or perform a statutory month-end close.")
     st.markdown("#### Scope and limitations")
     st.write("In-memory demonstration only. No real bank integration, payroll submissions, user authentication, persistent audit database or statutory financial reporting.")
     st.markdown("[Review the project source and tests](https://github.com/ShaikArham/ledgerpoint-finance-operations)")
