@@ -113,3 +113,10 @@ Created `index.html`, `styles.css`, `script.js`, `assets/logo.svg` and a GitHub 
 **Evidence:** Files were successfully committed through the GitHub connector. No HTML browser runtime, visual mobile screenshot, automated accessibility audit, or deployed GitHub Pages response was observed in this work session. GitHub Pages may require repository Pages settings to select GitHub Actions. Deployment is **configured, not confirmed live**.
 
 The prior GitHub Actions pytest run #75 showed 209 passing tests on the older PR head commit; it does **not** validate these new frontend commits. No test-pass assertion is made for the static website. Release remains not signed off pending deployment/browser evidence.
+
+## Deployment update — 2026-11-03 (later session)
+
+- Release QA PR #7 was merged as `b8673f33b4d796bd49c552ae238105ca934c059e` after GitHub Actions run 41725509934 / job 126229108423 reported success. The job included Python compilation and pytest; its precise test count was not independently read from logs.
+- Vercel production deployment `dpl_EimkVyBB2QPBfqzXz62Z3Ugbbry5` was created directly from the four static frontend files and Vercel API reported `READY`. Alias: https://ledgerpoint-finance-operations.vercel.app/ . This deployment is a manual source-file upload, **not** yet linked to automatic GitHub pushes.
+- `ledgerpoint.runs-on.dev` was added to the Vercel project but reported `verified:false`. The RunsOn registry `domains/ledgerpoint.json` currently has empty records. Vercel's recommended CNAME target was `b6caada461e5cd55.vercel-dns-017.com.`. RunsOn ownership is `ShaikArham`; DNS must be set by the owner through RunsOn manage or an approved registry PR.
+- External HTTP/browser/mobile screenshot checks could not be completed from this environment due to DNS/network restrictions. Vercel API `READY` does not independently prove a public HTTP response or visual/mobile QA.
