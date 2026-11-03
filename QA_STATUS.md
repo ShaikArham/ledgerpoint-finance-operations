@@ -51,3 +51,19 @@ The available local test environment has pytest but not Streamlit; external GitH
 - Collapsed the optional long walkthrough and adjusted mobile metric padding.
 - Added a narrative smoke test; it is committed but **not independently executed**.
 - No live mobile screenshot, deployment smoke test or full pytest pass has been independently confirmed.
+
+## Final QA attempt — 2026-11-03
+
+**Repository baseline:** latest changes include executive presentation improvements and a CI artifact upload step. The source files and CI YAML were inspected through the connected GitHub repository.
+
+**Actions verification:** The connected combined-status endpoint previously returned an empty status array, and its commit-workflow lookup filters to pull-request-triggered runs. These results do not establish a pass, failure or absence of push-triggered GitHub Actions runs. A current Actions job conclusion and its logs are still unverified.
+
+**Execution environment:** Direct `git ls-remote` failed with `Could not resolve host: github.com`. The local Python environment has pytest 9.0.2 but lacks Streamlit; therefore a full exact-repository pytest/AppTest run was not possible in this environment. No test-pass count is asserted.
+
+**Deployment verification:** Direct access to the Streamlit app was unavailable to the web inspection tool. The deployed revision, app startup and user interactions have not been independently confirmed.
+
+**Mobile verification:** Responsive CSS for narrow screens is present in source. No browser viewport screenshots, touch interaction or physical-device tests were performed. Treat mobile compatibility as unverified.
+
+**New evidence path:** The CI workflow now uploads `pytest-results.xml` as an Actions artifact after the test step (if a result file exists). This enables subsequent inspection but does not prove the workflow has executed successfully.
+
+**Release decision: NOT SIGNED OFF.** All Workstreams 9–14 have source and test coverage committed; Workstream 15 remains incomplete until current GitHub Actions, deployment, and responsive end-to-end evidence are reviewed.
