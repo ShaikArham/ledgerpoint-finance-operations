@@ -7,7 +7,7 @@ APP = str(Path(__file__).resolve().parents[1] / "app.py")
 def test_dashboard_loads_without_uncaught_exceptions():
     app = AppTest.from_file(APP, default_timeout=30).run()
     assert not app.exception, [str(error.message) for error in app.exception]
-    assert len(app.tabs) == 6
+    assert len(app.tabs) == 7
 
 def test_manual_journal_form_is_visible():
     app = AppTest.from_file(APP, default_timeout=30).run()
