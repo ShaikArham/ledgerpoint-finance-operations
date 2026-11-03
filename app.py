@@ -26,9 +26,10 @@ h1, h2, h3 {letter-spacing: -.025em}
 [data-testid="stMetric"] {background: #f3f6fa; border: 1px solid #e1e8f0; padding: 16px; border-radius: 12px}
 </style>
 """, unsafe_allow_html=True)
-st.title("LedgerPoint")
-st.caption("Finance Operations Simulator · Independent portfolio project · Fictional data only")
-st.info("Educational demonstration. Not affiliated with DataPoint Ireland. VAT amounts are illustrative, not Irish tax advice.")
+st.title("LedgerPoint | Finance Operations")
+st.caption("From invoice to insight · Interactive fictional finance-operations case study")
+st.info("Independent portfolio demonstration using fictional data. Not affiliated with DataPoint Ireland. VAT and payroll figures are illustrative, not tax or payroll advice.")
+st.markdown("**Start here:** Overview → Bank reconciliation → Exception cases → Approvals & audit → Financial reports. A reviewer can follow the core workflow in about 3 minutes.")
 
 demo = build_demo()
 book = demo.book
