@@ -40,9 +40,11 @@ with tab1:
     st.markdown("#### Financial snapshot")
     left, right = st.columns(2)
     with left:
-        st.bar_chart({"Revenue": float(demo.october.revenue),
-                      "Expenses": float(demo.october.expenses),
-                      "Net profit": float(demo.october.profit)})
+        st.bar_chart([
+            {"Category": "Revenue", "EUR": float(demo.october.revenue)},
+            {"Category": "Expenses", "EUR": float(demo.october.expenses)},
+            {"Category": "Net profit", "EUR": float(demo.october.profit)},
+        ], x="Category", y="EUR")
         st.caption("October 2026 fictional profit-and-loss amounts in EUR.")
     with right:
         open_invoices = invoice_positions(book, date(2026, 10, 31))
