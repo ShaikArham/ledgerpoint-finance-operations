@@ -14,6 +14,7 @@ from ledgerpoint.manual_entry import post_manual
 from ledgerpoint.csv_staging import stage_csv, csv_export, SCHEMAS, detect_csv_kind
 from ledgerpoint.cases import create_case, update_case, STATUSES, PRIORITIES
 from ledgerpoint.budget import parse_budget, compare_budget, forecast
+from ledgerpoint.cashflow import cash_flow, working_capital
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -29,8 +30,8 @@ st.info("Educational demonstration. Not affiliated with DataPoint Ireland. VAT a
 
 demo = build_demo()
 book = demo.book
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
-    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases", "Budget & forecast"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
+    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases", "Budget & forecast", "Cash flow"
 ])
 
 with tab1:
@@ -386,3 +387,36 @@ with tab9:
     b.metric("Scenario expenses", f"€{scenario.expenses:,.2f}")
     c.metric("Scenario profit", f"€{scenario.profit:,.2f}", delta=f"€{scenario.profit - demo.october.profit:+,.2f} vs actual")
     st.caption("A simple percentage what-if model, not a predictive statistical forecast or financial advice.")
+
+with tab10:
+    st.subheader("Cash flow and working capital")
+    st.caption("Posted ledger cash movements and trade invoice balances only. Unmatched bank statement items are not assumed to be posted cash.")
+    flow_start = st.date_input("Cash flow period start", value=date(2026, 10, 1), key="cash_start")
+    flow_end = st.date_input("Cash flow period end", value=date(2026, 10, 31), key="cash_end")
+    if flow_start > flow_end:
+        st.error("Start date cannot follow end date")
+    else:
+        flow = cash_flow(book, flow_start, flow_end)
+        a, b, c = st.columns(3)
+        a.metric("Customer receipts", f"€{flow.customer_receipts:,.2f}")
+        b.metric("Supplier payments", f"€{flow.supplier_payments:,.2f}")
+        c.metric("Net settlement cash flow", f"€{flow.net_settlement_cash_flow:,.2f}")
+        st.dataframe([
+            {"Movement": "Opening posted bank balance", "EUR": float(flow.opening_bank_balance)},
+            {"Movement": "Customer receipts", "EUR": float(flow.customer_receipts)},
+            {"Movement": "Supplier payments", "EUR": -float(flow.supplier_payments)},
+            {"Movement": "Other posted bank movements", "EUR": float(flow.other_posted_bank_movements)},
+            {"Movement": "Closing posted bank balance", "EUR": float(flow.closing_bank_balance)},
+        ], width="stretch", hide_index=True)
+        st.caption("Other posted bank movements reconcile opening and closing balances; they are not automatically classified as operating cash flow.")
+    st.markdown("#### Trade working capital")
+    working_date = st.date_input("Working capital as of", value=date(2026, 10, 31), key="working_date")
+    wc = working_capital(book, working_date)
+    a, b, c = st.columns(3)
+    a.metric("Trade receivables", f"€{wc.trade_receivables:,.2f}")
+    b.metric("Trade payables", f"€{wc.trade_payables:,.2f}")
+    c.metric("Net trade working capital", f"€{wc.net_trade_working_capital:,.2f}")
+    st.write(f"**Posted bank balance:** €{wc.bank_balance:,.2f}")
+    st.write(f"**Overdue customer balances:** €{wc.overdue_receivables:,.2f}")
+    st.write(f"**Overdue supplier balances:** €{wc.overdue_payables:,.2f}")
+    st.caption("Net trade working capital = trade receivables minus trade payables. This is not a statutory cash flow statement or a complete working-capital measure.")
