@@ -16,6 +16,7 @@ from ledgerpoint.cases import create_case, update_case, STATUSES, PRIORITIES
 from ledgerpoint.budget import parse_budget, compare_budget, forecast
 from ledgerpoint.cashflow import cash_flow, working_capital
 from ledgerpoint.payroll import PayrollInput, calculate_payroll, money
+from ledgerpoint.approvals import ApprovalRegister, request_approval, review_approval
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -31,8 +32,8 @@ st.info("Educational demonstration. Not affiliated with DataPoint Ireland. VAT a
 
 demo = build_demo()
 book = demo.book
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10, tab11 = st.tabs([
-    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases", "Budget & forecast", "Cash flow", "Payroll demo"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10, tab11, tab12 = st.tabs([
+    "Overview", "Invoices", "Bank reconciliation", "Financial reports", "Controls", "Journal sandbox", "CSV staging", "Exception cases", "Budget & forecast", "Cash flow", "Payroll demo", "Approvals & audit"
 ])
 
 with tab1:
@@ -450,3 +451,67 @@ with tab11:
         st.caption(f"Fictional employee: {slip.employee_id}. No payroll records, tax returns or ledger entries are created.")
     st.markdown("#### Operational controls demonstrated")
     st.write("Input validation, decimal rounding, employee-reference checks, gross-to-net reconciliation and clear separation of hypothetical deductions from statutory payroll.")
+
+with tab12:
+    st.subheader("Approvals and operational audit history")
+    st.warning("Fictional maker-checker demonstration only. User-entered actor names are not authenticated. Records are session-only, not tamper-proof, and decisions do not post to the ledger.")
+    if "approval_register" not in st.session_state:
+        st.session_state.approval_register = ApprovalRegister()
+    register = st.session_state.approval_register
+    st.metric("Pending approval requests", sum(r.status == "Pending" for r in register.requests))
+    with st.form("new_approval_request"):
+        request_id = st.text_input("Approval request ID", value="APR-001")
+        reference = st.text_input("Transaction or case reference", value="UNKNOWN-001")
+        requester = st.text_input("Requested by (fictional actor)", value="Demo maker")
+        reason = st.text_area("Request reason", value="Investigate unmatched bank transaction")
+        request_submitted = st.form_submit_button("Submit approval request")
+    if request_submitted:
+        try:
+            st.session_state.approval_register = request_approval(
+                register, request_id=request_id, reference=reference,
+                actor=requester, reason=reason)
+        except ValueError as exc:
+            st.error(str(exc))
+        else:
+            st.success("Approval request added to this session.")
+            st.rerun()
+    register = st.session_state.approval_register
+    if register.requests:
+        st.markdown("#### Approval register")
+        st.dataframe([
+            {"Request": r.request_id, "Reference": r.reference,
+             "Requested by": r.requested_by, "Status": r.status,
+             "Reviewed by": r.reviewed_by, "Review note": r.review_note}
+            for r in register.requests
+        ], width="stretch", hide_index=True)
+        pending = [r.request_id for r in register.requests if r.status == "Pending"]
+        if pending:
+            with st.form("review_approval"):
+                selected_request = st.selectbox("Pending request", pending)
+                reviewer = st.text_input("Reviewed by (fictional actor)", value="Demo checker")
+                decision = st.radio("Decision", ("Approved", "Rejected"), horizontal=True)
+                review_note = st.text_area("Review evidence / explanation")
+                review_submitted = st.form_submit_button("Record decision")
+            if review_submitted:
+                try:
+                    st.session_state.approval_register = review_approval(
+                        register, request_id=selected_request, actor=reviewer,
+                        decision=decision, note=review_note)
+                except ValueError as exc:
+                    st.error(str(exc))
+                else:
+                    st.success("Decision recorded in the session activity history.")
+                    st.rerun()
+    st.markdown("#### Append-only session activity")
+    if register.events:
+        st.dataframe([
+            {"Sequence": event.sequence, "Timestamp (UTC)": event.occurred_at,
+             "Actor": event.actor, "Action": event.action,
+             "Request": event.request_id, "Details": event.detail}
+            for event in register.events
+        ], width="stretch", hide_index=True)
+    else:
+        st.caption("No approval activity recorded in this session yet.")
+    if st.button("Reset fictional approval session", key="reset_approval_register"):
+        st.session_state.approval_register = ApprovalRegister()
+        st.rerun()
