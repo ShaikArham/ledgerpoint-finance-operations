@@ -254,10 +254,11 @@ with tab6:
 with tab7:
     st.subheader("CSV upload and quality checks")
     st.info("Upload fictional data for validation only. Nothing is posted to the ledger or sent to a bank.")
-    import_type = st.radio("Import type", ["invoices", "bank"], horizontal=True,
-                           format_func=lambda value: "Invoices" if value == "invoices" else "Bank transactions")
+    import_type = st.radio("Import type", ["invoices", "bank", "invoice_register"], horizontal=True,
+                           format_func=lambda value: {"invoices": "Invoice intake", "bank": "Bank transactions", "invoice_register": "LedgerPoint invoice register export"}[value])
     columns = SCHEMAS[import_type]
     st.caption("Required columns: " + ", ".join(columns))
+    st.caption("Choose LedgerPoint invoice register export for CSVs downloaded from the invoice table. Party names are preserved; no party IDs are invented.")
     sample = (
         "invoice_id,kind,party_id,issue_date,due_date,net_amount,vat_rate\\n"
         "DEMO-001,sales,C-001,2026-10-05,2026-11-04,100.00,0.23\\n"
@@ -265,6 +266,10 @@ with tab7:
         if import_type == "invoices" else
         "reference,date,amount\\nBANK-001,2026-10-15,500.00\\n"
         "BANK-001,2026-10-16,500.00\\n"
+        if import_type == "bank" else
+        "Invoice,Type,Party,Issue date,Due date,Net (€),Illustrative VAT (€),Gross (€),Outstanding (€),Status\\n"
+        "SALE-001,Sales,Harbour Design Studio,2026-10-05,2026-11-04,1000,230,1230,730,Outstanding\\n"
+        "BILL-001,Purchase,North Quay Supplies,2026-10-07,2026-11-06,300,69,369,0,Settled\\n"
     ).replace("\\n", "\n")
     st.download_button("Download sample CSV", sample, file_name=f"ledgerpoint-{import_type}-sample.csv",
                        mime="text/csv", key=f"sample_{import_type}")
