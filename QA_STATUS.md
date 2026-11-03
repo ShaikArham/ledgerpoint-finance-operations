@@ -79,3 +79,13 @@ Local environment check repeated: `git ls-remote` failed DNS resolution for gith
 External page inspection attempts for the Streamlit app and GitHub Actions page returned disabled fetch errors. This is **not** evidence of a broken deployment. It is an access limitation.
 
 Release remains **NOT SIGNED OFF**. Do not merge PR #6 or represent the application as tested until CI and live browser evidence are available.
+
+## Verified CI result — 2026-11-03 21:39 UTC
+
+**GitHub Actions run #75**, workflow `Python tests`, for draft PR #6 head commit `23c378a20e9a732498d0bd88c0bef3862a0693c2`, completed with job conclusion **success**. The job logs show **209 passed in 1.75s**, and successful Python compilation. JUnit artifact `pytest-results` (ID `13271934099`) was uploaded successfully.
+
+Evidence: https://github.com/ShaikArham/ledgerpoint-finance-operations/actions/runs/41723750161
+
+**Scope:** This is a verified CI pass for the pull-request branch and its exact tested commit, **not** a separate verified CI pass for the latest main-branch commit. Draft PR #6 remains unmerged. The prior statements saying no full pytest pass was available are superseded for this PR commit only.
+
+**Still outstanding:** Live Streamlit startup/browser interactions, mobile visual checks, and confirming the final release/main commit. Remote browser fetch was disabled and the local runtime lacks Streamlit. Release sign-off remains pending those checks.
