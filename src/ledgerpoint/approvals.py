@@ -63,8 +63,9 @@ def review_approval(register: ApprovalRegister, *, request_id: str, actor: str,
     note = _required(note, "Review note")
     if decision not in ("Approved", "Rejected"):
         raise ValueError("Decision must be Approved or Rejected")
+    request_id = _required(request_id, "Request ID")
     index = next((i for i, x in enumerate(register.requests)
-                  if x.request_id == request_id), None)
+                  if x.request_id.casefold() == request_id.casefold()), None)
     if index is None:
         raise ValueError("Approval request not found")
     current = register.requests[index]
@@ -73,7 +74,7 @@ def review_approval(register: ApprovalRegister, *, request_id: str, actor: str,
     if current.requested_by.casefold() == actor.casefold():
         raise ValueError("Requester cannot approve or reject their own request")
     updated = replace(current, status=decision, reviewed_by=actor, review_note=note)
-    event = _event(register, actor, decision, request_id, note, at)
+    event = _event(register, actor, decision, current.request_id, note, at)
     requests = list(register.requests)
     requests[index] = updated
     return replace(register, requests=tuple(requests), events=register.events + (event,))
