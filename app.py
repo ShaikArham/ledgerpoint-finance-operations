@@ -7,6 +7,7 @@ from ledgerpoint.reporting import trial_balance
 from ledgerpoint.exports import trial_balance_csv, reconciliation_csv
 from ledgerpoint.management import month_end_checks
 from ledgerpoint.reconciliation import reconciliation_summary
+from ledgerpoint.triage import investigate
 
 st.set_page_config(page_title="LedgerPoint | Finance Operations", page_icon="📊", layout="wide")
 st.markdown("""
@@ -68,7 +69,21 @@ with tab3:
     st.dataframe(rows, width="stretch", hide_index=True)
     counts = reconciliation_summary(list(demo.reconciliation))
     st.write(f"Matched: **{counts['matched']}** · Exceptions: **{len(rows) - counts['matched']}**")
-    st.warning("UNKNOWN-001 is a bank-only transaction. Investigate it before treating the bank statement as fully reconciled.")
+    st.markdown("#### Investigate a transaction")
+    references = [item.reference for item in demo.reconciliation]
+    selected_reference = st.selectbox("Bank or ledger reference", references,
+                                     index=references.index("UNKNOWN-001") if "UNKNOWN-001" in references else 0)
+    selected_item = next(item for item in demo.reconciliation if item.reference == selected_reference)
+    investigation = investigate(selected_item)
+    st.write(f"**Status:** {investigation.status.replace('_', ' ').title()}")
+    st.write(f"**Ledger amount:** {'Not found' if selected_item.ledger_amount is None else f'€{selected_item.ledger_amount:,.2f}'}")
+    st.write(f"**Bank amount:** {'Not found' if selected_item.bank_amount is None else f'€{selected_item.bank_amount:,.2f}'}")
+    st.write(investigation.explanation)
+    if investigation.resolved:
+        st.success(investigation.next_action)
+    else:
+        st.warning(investigation.next_action)
+    st.caption("Read-only investigation. No journal is posted and no exception is automatically cleared.")
     st.download_button("Download reconciliation CSV",
                        reconciliation_csv(demo.reconciliation),
                        file_name="ledgerpoint-reconciliation.csv", mime="text/csv")
