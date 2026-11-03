@@ -14,6 +14,7 @@ MAX_ROWS = 2000
 SCHEMAS = {
     "invoices": ("invoice_id", "kind", "party_id", "issue_date", "due_date", "net_amount", "vat_rate"),
     "bank": ("reference", "date", "amount"),
+    "invoice_register": ("Invoice", "Type", "Party", "Issue date", "Due date", "Net (€)", "Illustrative VAT (€)", "Gross (€)", "Outstanding (€)", "Status"),
 }
 
 @dataclass(frozen=True)
@@ -62,7 +63,31 @@ def stage_csv(data: bytes, kind: str) -> StagingResult:
                 if None in row or any(value is None for value in row.values()):
                     raise ValueError("Incorrect number of columns")
                 item = {name: (row[name] or "").strip() for name in SCHEMAS[kind]}
-                if kind == "invoices":
+                if kind == "invoice_register":
+                    if not item["Invoice"] or not item["Party"]:
+                        raise ValueError("Invoice and Party are required")
+                    if item["Type"].casefold() not in ("sales", "purchase"):
+                        raise ValueError("Type must be Sales or Purchase")
+                    issued = date.fromisoformat(item["Issue date"])
+                    due = date.fromisoformat(item["Due date"])
+                    if due < issued:
+                        raise ValueError("Due date precedes issue date")
+                    net = _money(item["Net (€)"], "Net (€)")
+                    vat = _money(item["Illustrative VAT (€)"], "Illustrative VAT (€)", allow_negative=True) if item["Illustrative VAT (€)"].strip() not in ("0", "0.0", "0.00") else Decimal("0")
+                    if vat < 0:
+                        raise ValueError("Illustrative VAT cannot be negative")
+                    gross = _money(item["Gross (€)"], "Gross (€)")
+                    outstanding = Decimal(item["Outstanding (€)"])
+                    if not outstanding.is_finite() or outstanding < 0 or outstanding > gross or outstanding.as_tuple().exponent < -2:
+                        raise ValueError("Outstanding must be between zero and gross with at most two decimals")
+                    if net + vat != gross:
+                        raise ValueError("Net plus illustrative VAT must equal gross")
+                    if item["Status"].casefold() not in ("settled", "outstanding"):
+                        raise ValueError("Status must be Settled or Outstanding")
+                    if (outstanding == 0) != (item["Status"].casefold() == "settled"):
+                        raise ValueError("Status disagrees with outstanding balance")
+                    key = (item["Type"].casefold(), item["Party"].casefold(), item["Invoice"].casefold())
+                elif kind == "invoices":
                     try:
                         invoice_kind = InvoiceKind(item["kind"].lower())
                     except ValueError:
