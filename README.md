@@ -14,6 +14,8 @@ Workstreams 1–8 were implemented earlier. Workstreams 9–14 are committed in 
 
 **Approval/audit disclaimer:** The approvals tab uses fictional, self-entered actors and session-only append-style events. It has no authentication, permanent storage, cryptographic integrity guarantees or real financial authorisation. Approvals never post transactions.\n\n**Payroll disclaimer:** The payroll tab uses a user-entered *fictional deduction percentage*. It does not calculate Irish PAYE, USC, PRSI, pensions or tax credits, and is not suitable for payroll processing or statutory compliance.
 
+**[Start with the 3-minute reviewer guide](REVIEWER_GUIDE.md)** · [Open the live demo](https://ledgerpoint-finance-operations.streamlit.app/) · [QA status](QA_STATUS.md)
+
 ## What you can explore
 
 | Area | Implemented demonstration |
@@ -23,10 +25,10 @@ Workstreams 1–8 were implemented earlier. Workstreams 9–14 are committed in 
 | Payments | Customer receipts, supplier payments, outstanding balances and ageing |
 | Reconciliation | Reference and amount matching, duplicate detection and unmatched bank transactions |
 | Reporting | Profit and loss, simplified balance sheet, monthly results, budget variance and close checks |
-| Web dashboard | Five read-only Streamlit sections and CSV downloads |
-| Quality | 90 automated tests verified locally as of Phase 4.3; dashboard testing ongoing |
+| Web dashboard | Twelve Streamlit tabs with isolated interactive demos and CSV downloads |
+| Quality | Earlier phase test count is historical; current full-suite and deployment verification pending |
 
-The dashboard runs a deterministic fictional scenario. It does **not** yet allow editing transactions, importing user files through the browser or storing changes permanently.
+The dashboard runs a deterministic fictional baseline. Isolated journal, CSV staging, case management and approval interactions are available, but they do not persist across sessions or alter the baseline financial records.
 
 ## Run locally (Windows PowerShell)
 
