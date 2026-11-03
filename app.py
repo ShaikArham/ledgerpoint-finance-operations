@@ -34,8 +34,31 @@ h1,h2,h3 {letter-spacing:-.035em;color:var(--dp-ink)}
 .dp-hero small {display:block;color:#c9e7e4;margin-top:12px}
 .dp-kicker {text-transform:uppercase;letter-spacing:.12em;color:#b9e8df;font-size:.75rem;font-weight:700}
 @media(max-width:640px){.block-container{padding:1rem .7rem 2rem;max-width:100%}[data-testid="stMetric"]{padding:10px}.dp-hero{padding:18px;border-radius:14px}.dp-hero h2{font-size:1.3rem}}
+/* OpsResolve-inspired visual structure: independent LedgerPoint styling */
+[data-testid="stAppViewContainer"] {background:radial-gradient(circle at 90% 0%,#e3f4f1 0,transparent 32%),#f5f8fb}
+[data-testid="stSidebar"] {background:linear-gradient(160deg,#0b2440,#123e60)}
+[data-testid="stSidebar"] * {color:#eaf2f8}
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {color:#d9e7f0}
+[data-testid="stMetric"] {background:#fff;box-shadow:0 10px 26px rgba(20,50,75,.07);border:1px solid #dce6ee;border-radius:16px}
+[data-testid="stMetricValue"] {font-weight:750}
+[data-testid="stVerticalBlockBorderWrapper"] {border-radius:16px}
+.dp-hero {box-shadow:0 14px 32px rgba(16,45,76,.12)}
+@media(max-width:640px){[data-testid="stMetric"]{padding:12px}[data-testid="stSidebar"]{max-width:90vw}}
 </style>
 """, unsafe_allow_html=True)
+with st.sidebar:
+    st.markdown("### ◈ LedgerPoint")
+    st.caption("FINANCE OPERATIONS WORKSPACE")
+    st.markdown("**REVIEWER JOURNEY**")
+    st.markdown("01 · Executive overview")
+    st.markdown("02 · Bank reconciliation")
+    st.markdown("03 · Exception cases")
+    st.markdown("04 · Approvals & audit")
+    st.markdown("05 · Financial reports")
+    st.divider()
+    st.caption("October 2026 · Fictional business dataset")
+    st.caption("Independent portfolio demo, not affiliated with DataPoint Ireland.")
+
 st.title("LedgerPoint")
 st.markdown("""<div class="dp-hero"><div class="dp-kicker">Connect the dots · Finance operations</div><h2>From transactions to better decisions</h2><p>Explore management reporting, bank reconciliation, cash flow and operational exceptions through a fictional business case.</p><small>Independent portfolio concept inspired by DataPoint Ireland’s published services. Not commissioned or endorsed.</small></div>""", unsafe_allow_html=True)
 st.caption("From invoice to insight · Interactive fictional finance-operations case study")
