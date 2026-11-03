@@ -18,6 +18,7 @@ class Account:
 CHART = {
     "1000": Account("1000", "Bank", AccountType.ASSET),
     "1100": Account("1100", "Trade receivables", AccountType.ASSET),
+    "1200": Account("1200", "Illustrative input VAT", AccountType.ASSET),
     "2000": Account("2000", "Trade payables", AccountType.LIABILITY),
     "2100": Account("2100", "VAT control", AccountType.LIABILITY),
     "3000": Account("3000", "Owner capital", AccountType.EQUITY),
