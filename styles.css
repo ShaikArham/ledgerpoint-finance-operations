@@ -338,3 +338,16 @@ html{scroll-behavior:smooth;scroll-padding-top:28px}
 .about-connect-links a{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #d7e5e8;border-radius:9px;padding:13px 15px;background:#fff;font-weight:650;font-size:13px}
 .about-connect-links a:hover,.about-connect-links a:focus-visible{border-color:#0d9d87;background:#eef8f5}
 @media(max-width:760px){.about-connect{grid-template-columns:1fr;gap:10px;padding:25px 0}}
+
+/* Final responsive hardening for first-screen and continuous journey */
+.film-gate{padding:clamp(8px,2.2vw,28px);overflow-y:auto;overscroll-behavior:contain}
+.film-gate .launch-redesign{box-sizing:border-box;width:min(1380px,100%);margin:auto;padding:clamp(20px,3vw,38px)!important;max-height:none;overflow:visible}
+.launch-redesign .launch-main{min-width:0}
+.launch-redesign .launch-copy,.launch-redesign .launch-screen{min-width:0}
+.launch-redesign .launch-copy h1{overflow-wrap:normal;hyphens:none}
+.launch-redesign .launch-screen{isolation:isolate}
+.launch-redesign .launch-screen video{background:#081b2c}
+.launch-redesign .launch-actions #intro-enter{min-height:52px;cursor:pointer}
+.launch-redesign .launch-screen .launch-video-play[hidden]{display:none!important}
+@media(max-width:760px){.film-gate{padding:8px}.film-gate .launch-redesign{padding:18px!important}.launch-redesign .launch-top{gap:12px;flex-wrap:wrap}.launch-redesign .launch-main{gap:14px}.launch-redesign .launch-copy h1{font-size:clamp(33px,9vw,50px)}.launch-redesign .launch-copy-footer{margin-top:12px}.launch-redesign .launch-screen{aspect-ratio:16/9}.launch-redesign .launch-actions{margin-top:12px}}
+@media(max-width:390px){.launch-redesign .launch-top>span:last-child{font-size:9px}.launch-redesign .launch-copy .launch-kicker{font-size:9px;line-height:1.6}.launch-redesign .launch-copy h1{font-size:34px}}
