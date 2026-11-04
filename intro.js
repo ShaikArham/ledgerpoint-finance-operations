@@ -39,7 +39,7 @@
   enter.addEventListener("click", close);
   play.addEventListener("click", async () => {
     clearTimeout(timer);
-    timer = setTimeout(() => fallback(), 15000);
+    timer = setTimeout(() => { if (video.readyState < 2 && video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) fallback(); }, 15000);
     status.textContent = "Loading film…";
     play.hidden = true;
     video.hidden = false;
@@ -71,7 +71,9 @@
       "The film could not load. Retry or explore the reconciliation case below.";
   }
   video.addEventListener("error", fallback);
-  video.addEventListener("playing", () => clearTimeout(timer));
+  video.addEventListener("playing", () => { clearTimeout(timer); status.textContent = "Playing at normal speed (1×)."; });
+  video.addEventListener("waiting", () => { status.textContent = "Buffering film…"; });
+  video.addEventListener("stalled", () => { status.textContent = "Connection interrupted. The film will resume when enough data loads."; });
   video.addEventListener("ended", () => {
     status.textContent =
       "Film complete. Replay using the player controls or explore LedgerPoint.";
@@ -114,6 +116,8 @@
       shell.inert = true;
       document.body.classList.add("intro-open");
       play.hidden = false;
+      play.textContent = "▶ Play";
+      play.setAttribute("aria-label", "Play LedgerPoint film");
       play.focus();
     }),
   );
