@@ -316,3 +316,17 @@ html{scroll-behavior:smooth;scroll-padding-top:28px}
 .overview-takeaway p{max-width:730px;color:#506b74;line-height:1.75;margin:0 0 22px}
 @media(max-width:1080px){.overview-analysis-grid{grid-template-columns:1fr}.overview-intro{grid-template-columns:1fr minmax(220px,.65fr)}}
 @media(max-width:700px){.overview-intro{grid-template-columns:1fr;gap:10px}.overview-intro h3{font-size:clamp(24px,6vw,32px)}.overview-investigate{padding:20px}.overview-investigate>strong{font-size:35px}.overview-kpis .kpi{min-height:150px}.overview-analysis-grid{gap:13px}.overview-chart-row{grid-template-columns:58px minmax(0,1fr) 55px;gap:8px}.overview-chart-row b{font-size:11px}.overview-formula{font-size:11px;gap:7px}.overview-formula strong{font-size:14px}}
+
+/* Release QA: accessibility, financial notes and application finish */
+.finance-explainer{background:#eef7f4;border-left:3px solid #188c7c;border-radius:8px;color:#365866;padding:17px 19px;font-size:13px;line-height:1.8;margin:20px 0}
+.finance-explainer strong{color:#143f4b}
+.about-cv-panel{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(210px,.7fr);gap:24px;align-items:center;background:#132b3d;border:1px solid #3c6570;border-radius:18px;padding:clamp(24px,4vw,44px);margin:32px 0;color:#fff}
+.about-cv-panel h3{color:#fff;font-size:clamp(23px,2.5vw,34px);line-height:1.15;letter-spacing:-.04em;margin:13px 0}
+.about-cv-panel p{color:#cadde3;max-width:650px;line-height:1.7}
+.about-cv-actions{display:flex;flex-direction:column;align-items:flex-start;gap:18px}
+.about-cv-actions .tag{color:#d3eee6;background:#2a5660;border:1px solid #467f82;padding:9px 12px}
+.about-cv-actions .btn{white-space:normal;text-align:center}
+.launch-redesign .launch-video-play:disabled{opacity:.78;cursor:not-allowed}
+.view{scroll-margin-top:95px}#guide,#overview,#investigation-lab,#reconciliation,#invoices,#performance,#case-study,#portfolio,#about{scroll-margin-top:95px}
+@media(max-width:760px){.about-cv-panel{grid-template-columns:1fr;gap:10px}.about-cv-actions{align-items:stretch}.about-cv-actions .btn{width:100%}.finance-explainer{font-size:12px;padding:14px}.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.table-wrap table{min-width:570px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
