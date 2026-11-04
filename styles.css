@@ -265,3 +265,14 @@ html{scroll-behavior:smooth;scroll-padding-top:28px}
 .launch-redesign .launch-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
 .launch-redesign .launch-actions button,.launch-redesign .launch-actions a{min-width:0!important}
 @media(max-width:760px){.film-gate .launch-redesign{width:calc(100vw - 20px);padding:20px!important}.launch-redesign .launch-main{grid-template-columns:1fr;gap:18px;padding:12px 0}.launch-redesign .launch-copy{padding:0}.launch-redesign .launch-copy h1{font-size:clamp(35px,9vw,56px);margin:12px 0}.launch-redesign .launch-copy>p{font-size:16px}.launch-redesign .launch-copy-footer{margin-top:14px}.launch-redesign .launch-actions{display:grid;grid-template-columns:1fr 1fr}.launch-redesign .launch-actions>*{width:100%;text-align:center}.launch-redesign #intro-film-link{grid-column:1/-1}.launch-redesign .launch-disclaimer{font-size:10px;line-height:1.5}}
+
+/* Play directly over the poster, never redirect to another film page */
+.launch-redesign .launch-screen .launch-video-play{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);width:116px;min-height:116px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(255,255,255,.72);border-radius:100px;background:rgba(7,30,47,.8);color:white;cursor:pointer;box-shadow:0 8px 35px #0018;backdrop-filter:blur(12px)}
+.launch-redesign .launch-screen .launch-video-play>span{font-size:30px;line-height:1}
+.launch-redesign .launch-screen .launch-video-play>small{font-size:11px;line-height:1.25;text-align:center;padding:0 9px}
+.launch-redesign .launch-screen .launch-video-play:hover{background:#166b67;border-color:#9fe6d1}
+.launch-redesign .launch-screen .launch-video-play:focus-visible{outline:3px solid #8fe6cf;outline-offset:4px}
+.launch-redesign .launch-screen .launch-video-play[hidden]{display:none!important}
+.launch-redesign .launch-actions{justify-content:flex-end!important}
+.launch-redesign .launch-actions #intro-enter{min-width:220px!important}
+@media(max-width:760px){.launch-redesign .launch-actions{display:flex;justify-content:stretch}.launch-redesign .launch-actions #intro-enter{width:100%}.launch-redesign .launch-screen .launch-video-play{width:84px;min-height:84px}.launch-redesign .launch-screen .launch-video-play>span{font-size:23px}.launch-redesign .launch-screen .launch-video-play>small{font-size:9px}}
