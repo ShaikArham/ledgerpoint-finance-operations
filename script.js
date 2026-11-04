@@ -8,7 +8,6 @@
     invoices: "Invoice register",
     performance: "Financial performance",
     "case-study": "Case study",
-    portfolio: "Portfolio",
     about: "About & application",
   };
   const sections = [...document.querySelectorAll("section.view")];
