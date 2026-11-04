@@ -4015,3 +4015,13 @@ td {
 @media (prefers-reduced-motion: reduce) {
   .film-gate.film-exiting, #app-shell.app-revealing {animation:none!important;transition:none!important}
 }
+
+/* Review polish: compact replay and accessible fixed desktop navigation */
+.overview-header-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.overview-replay-btn{border:1px solid #b5d6d2;background:#fff;color:#0b5260;border-radius:999px;padding:9px 14px;font-size:12px;font-weight:750;cursor:pointer}
+.overview-replay-btn:hover{background:#e8f7f4}
+.role-card-cv-actions{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.role-card-cv-actions a{display:inline-flex!important;align-items:center;justify-content:center;flex:1 1 130px;padding:10px 12px!important;border:1px solid #83cdbf!important;border-radius:8px;color:#d6fff2!important;background:#ffffff10!important;font-size:12px!important;text-decoration:none!important}
+.role-card-cv-actions a:hover{background:#ffffff22!important}
+@media(min-width:769px){.sidebar{overflow:visible!important;position:sticky;top:0;height:100vh;padding:18px 12px}.sidebar .nav-label{margin:24px 10px 8px}.sidebar nav{gap:2px;overflow:visible!important;max-height:none!important}.sidebar .nav-link{padding:9px 12px;font-size:12px}.sidebar .side-bottom{padding:8px;font-size:10px}.sidebar::-webkit-scrollbar,.sidebar nav::-webkit-scrollbar{display:none}}
+@media(max-width:768px){.overview-header-actions{justify-content:flex-start}.overview-replay-btn{min-height:44px}}
