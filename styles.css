@@ -3974,3 +3974,13 @@ td {
     border: 2px solid Highlight;
   }
 }
+
+/* About-page project disclosure: native, keyboard-accessible and mobile-friendly. */
+.project-dropdown{min-width:min(100%,270px);max-width:100%;position:relative}
+.project-dropdown summary{cursor:pointer;list-style:none;border:1px solid #bed0d5;border-radius:12px;padding:14px 18px;background:#fff;color:#0b263e;font-weight:700}
+.project-dropdown summary::-webkit-details-marker{display:none}
+.project-dropdown summary:focus-visible,.project-dropdown-links a:focus-visible{outline:3px solid #137b78;outline-offset:3px}
+.project-dropdown-links{display:grid;gap:8px;padding:12px 0}
+.project-dropdown-links a{display:block;padding:12px 14px;border-radius:10px;background:#fff;color:#0b263e;text-decoration:none;border:1px solid #d8e3e5;overflow-wrap:anywhere}
+.project-dropdown-links a:hover{border-color:#137b78;text-decoration:underline}
+@media(max-width:680px){.project-dropdown{width:100%}.about-cv-actions{display:flex;flex-wrap:wrap;gap:10px}}
