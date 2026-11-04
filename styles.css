@@ -260,7 +260,7 @@ html{scroll-behavior:smooth;scroll-padding-top:28px}
 .launch-redesign .launch-screen{position:relative;width:100%;height:auto!important;min-height:0!important;aspect-ratio:16/9;background:#06192a;border:1px solid #416275;border-radius:13px;overflow:hidden}
 .launch-redesign .launch-screen>img,.launch-redesign .launch-screen>video{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .launch-redesign .launch-screen>video[hidden]{display:none!important}
-.launch-redesign.has-film .launch-screen>img{display:none}
+.film-gate.has-film .launch-redesign .launch-screen>img{display:none}
 .launch-redesign .launch-screen .launch-overlay{display:none!important}
 .launch-redesign .launch-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
 .launch-redesign .launch-actions button,.launch-redesign .launch-actions a{min-width:0!important}
