@@ -123,3 +123,36 @@ body{letter-spacing:-.008em;background:#f4f6f7}
 
 /* Final reviewer-facing polish */
 .hero-quote{font-size:clamp(15px,1.65vw,21px);font-weight:600;color:#147e79;margin:0 0 18px;letter-spacing:-.015em}.hero-actions{flex-wrap:wrap}.hero-actions .film-link{border:1px solid #b5cbd4;background:#fff;color:#14364c}.hero-actions .film-link:hover{border-color:#087c78;color:#087c78}.hero-actions a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}.view[hidden]{display:none!important}@media(max-width:600px){.hero-actions .film-link{width:100%}}
+
+/* Film-first entry, awaiting final HeyGen export */
+body.intro-open{overflow:hidden}
+#film-gate{position:fixed!important;inset:0!important;z-index:1000!important;display:grid!important;place-items:center!important;overflow-y:auto!important;background:rgba(4,18,30,.95)!important;padding:clamp(12px,3vw,36px)!important;min-height:100dvh!important}
+#film-gate[hidden]{display:none!important}
+.launch-dialog{width:min(960px,100%);background:#081d2c;border:1px solid #35505c;border-radius:18px;overflow:hidden;box-shadow:0 35px 100px #0008;color:#f3f7f9}
+.launch-top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 24px;font-size:10px;letter-spacing:.13em;color:#b7cdd3}
+.launch-brand{font-size:22px;letter-spacing:-.04em;font-weight:850;color:#fff}.launch-brand span{color:#83d4bd}
+.launch-screen{position:relative;aspect-ratio:16/9;background:#071c2e;overflow:hidden}
+.launch-screen>img{width:100%;height:100%;object-fit:cover;display:block}
+.launch-overlay{position:absolute;left:0;right:0;bottom:0;padding:40px 28px 20px;background:linear-gradient(transparent,rgba(3,16,27,.95));text-shadow:0 2px 12px #0009}
+.launch-overlay h1{font-size:clamp(24px,4vw,46px);margin:8px 0;line-height:1.1;color:white}
+.launch-overlay p{margin:0 0 12px;color:#d5e6e8;font-size:clamp(12px,1.5vw,18px)}
+.launch-kicker{color:#92e6d0;font-size:11px;letter-spacing:.18em;font-weight:800}
+.launch-note{display:inline-block;color:#f4d4a1;font-size:12px}
+.launch-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 24px}
+.launch-actions a,.launch-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 20px;border-radius:8px;font:inherit;font-weight:700;text-decoration:none}
+.launch-watch{border:1px solid #526b75;color:#e6f2f2;background:transparent}
+#intro-enter{border:0;background:#83d4bd;color:#062d33;cursor:pointer}
+.launch-disclaimer{font-size:11px;line-height:1.5;color:#a9c0c8;padding:0 24px 20px;margin:0}
+.hero[hidden]{display:none!important}
+.about-page{padding-bottom:30px}.about-intro{display:grid;grid-template-columns:1.4fr .8fr;gap:26px;margin:24px 0}
+.about-intro>div,.about-identity,.about-next{background:#fff;border:1px solid #dce8ed;border-radius:12px;padding:clamp(22px,3vw,36px)}
+.about-intro h3{font-size:clamp(23px,2.6vw,34px);letter-spacing:-.04em;line-height:1.2;margin:15px 0}
+.about-intro p,.about-columns p,.about-next p{color:#536c79;line-height:1.75}
+.about-identity{background:#0b2b3d;color:#fff}.about-identity>span{color:#89d9c7;font-size:11px;letter-spacing:.14em}
+.about-identity strong{display:block;font-size:clamp(24px,3vw,38px);line-height:1.1;margin:25px 0 12px}.about-identity p{color:#c5d8df}
+.about-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:25px}.about-tags span{padding:7px 10px;border:1px solid #53747e;border-radius:6px;font-size:11px;color:#d7eeee}
+.about-columns{display:grid;grid-template-columns:1fr 1fr;gap:20px}.about-columns .panel{padding:26px}
+.about-next{display:flex;justify-content:space-between;gap:22px;align-items:center;margin-top:24px;background:#eff9f6}
+.about-next h3{font-size:clamp(20px,2.5vw,28px);margin:10px 0}.about-next-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+@media(max-width:700px){.launch-top{padding:12px 16px}.launch-top>span:last-child{font-size:8px;text-align:right}.launch-overlay{padding:25px 15px 10px}.launch-overlay h1{font-size:22px}.launch-actions{padding:14px;flex-direction:column}.launch-actions a,.launch-actions button{width:100%}.launch-disclaimer{padding:0 14px 14px}.about-intro,.about-columns{grid-template-columns:1fr}.about-next{flex-direction:column;align-items:stretch}.about-next-actions{width:100%}.about-next-actions a{width:100%;text-align:center}}
+@media(max-height:670px){#film-gate{place-items:start center}.launch-dialog{margin:auto}.launch-screen{max-height:48vh}}
