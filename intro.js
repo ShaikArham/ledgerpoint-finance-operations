@@ -1,1 +1,110 @@
-(()=>{"use strict";const gate=document.getElementById("film-gate"),enter=document.getElementById("intro-enter"),video=document.getElementById("intro-video"),play=document.getElementById("intro-play"),poster=document.getElementById("intro-poster"),main=document.getElementById("main");if(!gate||!enter||!video||!play)return;let source="";const label=play.querySelector("small");const files=["ledgerpoint-intro-web.mp4","ledgerpoint-intro-1080p.mp4"];function close(){video.pause();gate.hidden=true;document.body.classList.remove("intro-open");try{sessionStorage.setItem("ledgerpoint-intro-seen","1")}catch{}main?.focus({preventScroll:true})}function open(){gate.hidden=false;document.body.classList.add("intro-open");play.focus({preventScroll:true})}function reset(message){video.pause();video.hidden=true;poster.hidden=false;gate.classList.remove("has-film");play.hidden=false;if(message)label.textContent=message}enter.addEventListener("click",close);video.addEventListener("ended",()=>{video.pause();video.controls=true;play.hidden=false;label.textContent="Replay film"});video.addEventListener("error",()=>reset("Unable to play · Explore below"));play.addEventListener("click",async()=>{if(!source){return}video.src=new URL("./assets/"+source,location.href).href;video.hidden=false;poster.hidden=true;gate.classList.add("has-film");play.hidden=true;video.controls=true;try{video.currentTime=0;await video.play()}catch{reset("Tap to retry playback")}});async function check(){for(const file of files){try{const url="./assets/"+file;const response=await fetch(url,{method:"HEAD",cache:"no-store"});if(response.ok&&Number(response.headers.get("content-length")||"1")>0){source=file;label.textContent="Play film";play.hidden=false;play.disabled=false;play.removeAttribute("aria-disabled");return}}catch{}}play.disabled=true;play.hidden=true;play.setAttribute("aria-disabled","true");label.textContent="Film unavailable"}play.disabled=true;play.hidden=true;label.textContent="Checking film…";check();gate.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();close()}if(e.key==="Tab"){const els=[...gate.querySelectorAll("a[href],button:not([disabled]):not([hidden]),video:not([hidden])")].filter(el=>el.getClientRects().length);if(!els.length)return;const first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});let seen=false;try{seen=sessionStorage.getItem("ledgerpoint-intro-seen")==="1"}catch{}if(location.hash&&location.hash!=="#intro"||seen)gate.hidden=true;else open();window.addEventListener("pageshow",()=>{if(!gate.hidden)(play.disabled?enter:play).focus({preventScroll:true})})})();
+(() => {
+  "use strict";
+  const gate = document.getElementById("film-gate"),
+    enter = document.getElementById("intro-enter");
+  if (!gate || !enter) return;
+  const main = document.getElementById("main"),
+    shell = document.getElementById("app-shell"),
+    video = document.getElementById("intro-video"),
+    play = document.getElementById("intro-play"),
+    poster = document.getElementById("intro-poster"),
+    status = document.getElementById("intro-status");
+  if (!main || !shell || !video || !play || !poster || !status) return;
+  let timer;
+  function close() {
+    clearTimeout(timer);
+    video.pause();
+    gate.hidden = true;
+    shell.inert = false;
+    document.body.classList.remove("intro-open");
+    try {
+      sessionStorage.setItem("ledgerpoint-intro-seen", "1");
+    } catch {}
+    main?.focus({ preventScroll: true });
+  }
+  enter.addEventListener("click", close);
+  play.addEventListener("click", async () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fallback(), 15000);
+    status.textContent = "Loading film…";
+    play.hidden = true;
+    video.hidden = false;
+    poster.hidden = true;
+    try {
+      video.load();
+      await video.play();
+      clearTimeout(timer);
+      status.textContent =
+        "Use the player controls to pause, replay or enable English captions.";
+    } catch {
+      if (video.error) {
+        fallback();
+      } else {
+        status.textContent = "Press play in the video controls to begin.";
+      }
+    }
+  });
+  function fallback() {
+    clearTimeout(timer);
+    video.pause();
+    video.hidden = true;
+    poster.hidden = false;
+    play.hidden = false;
+    play.textContent = "Retry film";
+    play.setAttribute("aria-label", "Retry film");
+    status.textContent =
+      "The film could not load. Retry or explore the reconciliation case below.";
+  }
+  video.addEventListener("error", fallback);
+  video.addEventListener("playing", () => clearTimeout(timer));
+  video.addEventListener("ended", () => {
+    status.textContent =
+      "Film complete. Replay using the player controls or explore LedgerPoint.";
+  });
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      if (gate.hidden) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+      }
+      if (e.key === "Tab") {
+        const nodes = [
+          ...gate.querySelectorAll("button,video[controls],a[href]"),
+        ].filter((n) => !n.hidden && n.getClientRects().length);
+        const first = nodes[0],
+          last = nodes.at(-1);
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    true,
+  );
+  document.querySelectorAll("[data-replay-film]").forEach((button) =>
+    button.addEventListener("click", () => {
+      gate.hidden = false;
+      shell.inert = true;
+      document.body.classList.add("intro-open");
+      play.hidden = false;
+      play.focus();
+    }),
+  );
+  let seen = false;
+  try {
+    seen = sessionStorage.getItem("ledgerpoint-intro-seen") === "1";
+  } catch {}
+  if ((location.hash && location.hash !== "#intro") || seen) {
+    gate.hidden = true;
+  } else {
+    gate.hidden = false;
+    shell.inert = true;
+    document.body.classList.add("intro-open");
+    play.focus({ preventScroll: true });
+  }
+})();

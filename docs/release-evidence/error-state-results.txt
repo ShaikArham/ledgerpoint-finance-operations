@@ -1,0 +1,2 @@
+Chromium local checks: missing media, retry recovery, Escape capture, main focus, replay, JavaScript-disabled main access, 320px emulated touch lab: passed.
+Real-device results: unrun.

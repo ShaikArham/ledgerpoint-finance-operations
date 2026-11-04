@@ -36,9 +36,23 @@
     {
       "src": "legal.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "404.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/(.*)",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'"
+      },
+      "continue": true
+    },
     {
       "src": "/",
       "dest": "/index.html"
