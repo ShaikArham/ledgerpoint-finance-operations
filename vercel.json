@@ -32,6 +32,10 @@
     {
       "src": "film.css",
       "use": "@vercel/static"
+    },
+    {
+      "src": "legal.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
