@@ -13,9 +13,9 @@
   let timer;
   let closing = false;
   const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  video.defaultPlaybackRate = 1.5;
-  video.playbackRate = 1.5;
-  video.addEventListener("loadedmetadata", () => { video.playbackRate = 1.5; });
+  video.defaultPlaybackRate = 1;
+  video.playbackRate = 1;
+  video.addEventListener("loadedmetadata", () => { video.playbackRate = 1; });
   function finishClose() {
     gate.hidden = true;
     gate.classList.remove("film-exiting");
@@ -46,11 +46,11 @@
     poster.hidden = true;
     try {
       video.load();
-      video.playbackRate = 1.5;
+      video.playbackRate = 1;
       await video.play();
       clearTimeout(timer);
       status.textContent =
-        "Playing at 1.5× speed. Use the player controls to pause, seek, change speed or enable captions.";
+        "Playing at normal speed. Use the player controls to pause, seek or enable captions.";
     } catch {
       if (video.error) {
         fallback();
@@ -107,7 +107,7 @@
       shell.classList.remove("app-revealing");
       video.pause();
       video.currentTime = 0;
-      video.playbackRate = 1.5;
+      video.playbackRate = 1;
       video.hidden = true;
       poster.hidden = false;
       gate.hidden = false;
