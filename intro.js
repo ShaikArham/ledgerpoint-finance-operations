@@ -23,6 +23,7 @@
     shell.inert = false;
     document.body.classList.remove("intro-open");
     closing = false;
+    if (location.hash !== "#overview") location.hash = "overview";
     main?.focus({ preventScroll: true });
   }
   function close() {
@@ -36,6 +37,10 @@
     window.setTimeout(finishClose, 620);
   }
   enter.addEventListener("click", close);
+  // Clicking the backdrop outside the intro card goes straight to Overview.
+  gate.addEventListener("click", (event) => {
+    if (event.target === gate) close();
+  });
   play.addEventListener("click", async () => {
     clearTimeout(timer);
     timer = setTimeout(() => { if (video.readyState < 2 && video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) fallback(); }, 15000);
@@ -49,7 +54,7 @@
       await video.play();
       clearTimeout(timer);
       status.textContent =
-        "Playing at normal speed. Use the player controls to pause, seek or enable captions.";
+        "Playing at normal speed. Use the player controls to pause or seek.";
     } catch {
       if (video.error) {
         fallback();
