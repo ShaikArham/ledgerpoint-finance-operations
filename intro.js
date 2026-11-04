@@ -23,7 +23,6 @@
     shell.inert = false;
     document.body.classList.remove("intro-open");
     closing = false;
-    try { sessionStorage.setItem("ledgerpoint-intro-seen", "1"); } catch {}
     main?.focus({ preventScroll: true });
   }
   function close() {
@@ -123,11 +122,8 @@
       play.focus();
     }),
   );
-  let seen = false;
-  try {
-    seen = sessionStorage.getItem("ledgerpoint-intro-seen") === "1";
-  } catch {}
-  if ((location.hash && location.hash !== "#intro") || seen) {
+  // Show the film on every fresh homepage visit; prior viewing must not hide it.
+  if (location.hash && location.hash !== "#intro") {
     gate.hidden = true;
   } else {
     gate.hidden = false;
