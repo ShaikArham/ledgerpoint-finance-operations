@@ -71,6 +71,8 @@
       "The film could not load. Retry or explore the reconciliation case below.";
   }
   video.addEventListener("error", fallback);
+  video.addEventListener("loadeddata", () => { if (!video.paused) status.textContent = "Playing at normal speed (1×)."; });
+  video.addEventListener("ratechange", () => { if (video.playbackRate !== 1) video.playbackRate = 1; });
   video.addEventListener("playing", () => { clearTimeout(timer); status.textContent = "Playing at normal speed (1×)."; });
   video.addEventListener("waiting", () => { status.textContent = "Buffering film…"; });
   video.addEventListener("stalled", () => { status.textContent = "Connection interrupted. The film will resume when enough data loads."; });
