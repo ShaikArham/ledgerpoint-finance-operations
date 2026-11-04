@@ -3984,3 +3984,34 @@ td {
 .project-dropdown-links a{display:block;padding:12px 14px;border-radius:10px;background:#fff;color:#0b263e;text-decoration:none;border:1px solid #d8e3e5;overflow-wrap:anywhere}
 .project-dropdown-links a:hover{border-color:#137b78;text-decoration:underline}
 @media(max-width:680px){.project-dropdown{width:100%}.about-cv-actions{display:flex;flex-wrap:wrap;gap:10px}}
+
+/* Film-to-workspace reveal: composited transforms, no scroll-jacking. */
+@media (prefers-reduced-motion: no-preference) {
+  .film-gate.film-exiting {
+    pointer-events:none;
+    animation: ledgerpoint-film-out 620ms cubic-bezier(.22,1,.36,1) both;
+  }
+  .film-gate.film-exiting .launch-dialog {
+    animation: ledgerpoint-film-card-out 620ms cubic-bezier(.22,1,.36,1) both;
+  }
+  #app-shell.app-revealing {
+    animation: ledgerpoint-app-rise 620ms cubic-bezier(.22,1,.36,1) both;
+    will-change:transform,opacity;
+  }
+  @keyframes ledgerpoint-film-out {
+    0% {opacity:1}
+    70% {opacity:.28}
+    100% {opacity:0;visibility:hidden}
+  }
+  @keyframes ledgerpoint-film-card-out {
+    0% {transform:translate3d(0,0,0) scale(1);opacity:1}
+    100% {transform:translate3d(0,-9vh,0) scale(.94);opacity:0}
+  }
+  @keyframes ledgerpoint-app-rise {
+    0% {transform:translate3d(0,52px,0) scale(.975);opacity:.55}
+    100% {transform:translate3d(0,0,0) scale(1);opacity:1}
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .film-gate.film-exiting, #app-shell.app-revealing {animation:none!important;transition:none!important}
+}
