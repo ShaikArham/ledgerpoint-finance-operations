@@ -237,3 +237,12 @@ html{scroll-behavior:smooth;scroll-padding-top:28px}
 @media(max-width:950px){.about-cap-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.about-masthead{grid-template-columns:1fr 1fr}.about-role-card{min-height:0}}
 @media(max-width:680px){.about-masthead,.about-story{grid-template-columns:1fr}.about-masthead h2{font-size:clamp(44px,11vw,62px)}.about-role-card{padding:26px;min-height:0}.about-role-card h3{font-size:32px}.about-story{gap:10px;padding:35px 0}.about-cap-grid{grid-template-columns:1fr 1fr}.about-cap-grid article{padding:18px 15px}.about-cap-grid h4{font-size:16px;margin-top:15px}.about-timeline{padding:0 17px}.timeline-item{grid-template-columns:1fr;gap:6px}.about-portfolio-strip{flex-direction:column;align-items:flex-start}.about-text-link{white-space:normal}.about-final-bottom{flex-direction:column;align-items:flex-start}}
 @media(max-width:370px){.about-cap-grid{grid-template-columns:1fr}}
+
+/* Review pass 1: first impression and executive overview */
+.review-progress{position:sticky;top:0;height:3px;z-index:30;background:#dce8e8;margin:0 -1px 14px;pointer-events:none}.review-progress span{display:block;width:0;height:100%;background:#159d8d;transition:width .15s linear}
+.overview-clarity{background:#e9f6f2;border:1px solid #b9ddd2;border-left:4px solid #158f7d;border-radius:9px;color:#284c56;padding:16px 19px;line-height:1.7;margin:2px 0 24px;font-size:14px}.overview-clarity strong{color:#143e46}
+#overview .kpi{min-width:0}#overview .kpi>span{font-size:10px;letter-spacing:.08em;line-height:1.45}#overview .kpi strong{font-variant-numeric:tabular-nums}#overview .kpi small{line-height:1.55}
+#guide .guide-intro{align-items:center}#guide .guide-steps article{scroll-margin-top:90px}
+@media(max-width:700px){.review-progress{top:0}.overview-clarity{font-size:13px;padding:14px}#overview .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#overview .kpi{padding:15px 12px}#overview .kpi strong{font-size:clamp(24px,7vw,33px)}}
+@media(max-width:360px){#overview .kpis{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.review-progress span{transition:none}}
