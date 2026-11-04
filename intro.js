@@ -11,16 +11,30 @@
     status = document.getElementById("intro-status");
   if (!main || !shell || !video || !play || !poster || !status) return;
   let timer;
+  let closing = false;
+  const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  video.defaultPlaybackRate = 1.5;
+  video.playbackRate = 1.5;
+  video.addEventListener("loadedmetadata", () => { video.playbackRate = 1.5; });
+  function finishClose() {
+    gate.hidden = true;
+    gate.classList.remove("film-exiting");
+    shell.classList.remove("app-revealing");
+    shell.inert = false;
+    document.body.classList.remove("intro-open");
+    closing = false;
+    try { sessionStorage.setItem("ledgerpoint-intro-seen", "1"); } catch {}
+    main?.focus({ preventScroll: true });
+  }
   function close() {
     clearTimeout(timer);
     video.pause();
-    gate.hidden = true;
-    shell.inert = false;
-    document.body.classList.remove("intro-open");
-    try {
-      sessionStorage.setItem("ledgerpoint-intro-seen", "1");
-    } catch {}
-    main?.focus({ preventScroll: true });
+    if (closing) return;
+    closing = true;
+    if (reducedMotion()) { finishClose(); return; }
+    gate.classList.add("film-exiting");
+    shell.classList.add("app-revealing");
+    window.setTimeout(finishClose, 620);
   }
   enter.addEventListener("click", close);
   play.addEventListener("click", async () => {
@@ -32,10 +46,11 @@
     poster.hidden = true;
     try {
       video.load();
+      video.playbackRate = 1.5;
       await video.play();
       clearTimeout(timer);
       status.textContent =
-        "Use the player controls to pause, replay or enable English captions.";
+        "Playing at 1.5× speed. Use the player controls to pause, seek, change speed or enable captions.";
     } catch {
       if (video.error) {
         fallback();
@@ -88,6 +103,13 @@
   );
   document.querySelectorAll("[data-replay-film]").forEach((button) =>
     button.addEventListener("click", () => {
+      gate.classList.remove("film-exiting");
+      shell.classList.remove("app-revealing");
+      video.pause();
+      video.currentTime = 0;
+      video.playbackRate = 1.5;
+      video.hidden = true;
+      poster.hidden = false;
       gate.hidden = false;
       shell.inert = true;
       document.body.classList.add("intro-open");
