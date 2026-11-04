@@ -120,3 +120,6 @@ body{letter-spacing:-.008em;background:#f4f6f7}
 .sidebar nav{overflow-y:auto;min-height:0;padding-bottom:8px}.sidebar .nav-label{margin-top:30px}.sidebar .nav-link{min-height:44px}
 @media(max-width:900px){.mobile-nav{flex-shrink:0}.mobile-nav a{min-height:44px}.view.investigation-lab{scroll-margin-top:75px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.view{animation:none!important}*,*:before,*:after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+/* Final reviewer-facing polish */
+.hero-quote{font-size:clamp(15px,1.65vw,21px);font-weight:600;color:#147e79;margin:0 0 18px;letter-spacing:-.015em}.hero-actions{flex-wrap:wrap}.hero-actions .film-link{border:1px solid #b5cbd4;background:#fff;color:#14364c}.hero-actions .film-link:hover{border-color:#087c78;color:#087c78}.hero-actions a{min-height:44px;display:inline-flex;align-items:center;justify-content:center}.view[hidden]{display:none!important}@media(max-width:600px){.hero-actions .film-link{width:100%}}
