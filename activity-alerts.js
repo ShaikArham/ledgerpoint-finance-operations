@@ -20,7 +20,7 @@
   const schedule = () => {
     if (submitted) return;
     clearTimeout(timer);
-    timer = setTimeout(flush, 12000);
+    timer = setTimeout(flush, 90000);
   };
   const mark = (name) => {
     if (submitted) return;
@@ -39,5 +39,8 @@
       mark(a.hasAttribute('download') ? 'cv_download' : 'cv_view');
     });
     window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && !submitted) schedule();
+    });
   });
 })();
