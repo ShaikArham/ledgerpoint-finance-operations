@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
     const r = await fetch('https://api.resend.com/emails',{
       method:'POST',
       headers:{Authorization:'Bearer '+key,'Content-Type':'application/json'},
-      body:JSON.stringify({from:'LedgerPoint Alerts <onboarding@resend.dev>',to:['shaikarhamsaquib1181113@gmail.com'],subject:'LedgerPoint | '+title,text:message})
+      body:JSON.stringify({from:'LedgerPoint Alerts <onboarding@resend.dev>',to:['shaikarhamsaquib1188113@gmail.com'],subject:'LedgerPoint | '+title,text:message})
     });
     if (!r.ok) {console.error('Resend failed',r.status,(await r.text()).slice(0,300));return res.status(502).json({ok:false,reason:'Delivery provider rejected request'});}
     return res.status(200).json({ok:true});
