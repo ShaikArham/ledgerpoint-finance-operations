@@ -49,5 +49,10 @@
       "source": "/download-cv.pdf",
       "destination": "/assets/Shaik_Arham_Saquib_DataPoint.pdf"
     }
-  ]
+  ],
+  "functions": {
+    "api/download-cv.js": {
+      "includeFiles": "assets/Shaik_Arham_Saquib_DataPoint.pdf"
+    }
+  }
 }
