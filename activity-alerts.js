@@ -40,7 +40,7 @@
       const a = e.target.closest('a[href]');
       if (!a) return;
       const href = (a.getAttribute('href') || '').toLowerCase();
-      if (!href.includes('shaik_arham_saquib_datapoint.pdf') && !href.includes('download-cv.pdf')) return;
+      if (!href.includes('shaik_arham_saquib_datapoint.pdf') && !href.includes('download-cv.pdf') && !href.includes('/api/download-cv')) return;
       mark(a.hasAttribute('download') ? 'cv_download' : 'cv_view');
     });
     window.addEventListener('pagehide', flush);
