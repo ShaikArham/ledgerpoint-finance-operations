@@ -1,53 +1,52 @@
 # LedgerPoint
 
-## New standalone website (HTML / CSS / JavaScript)
+**An independent finance-operations portfolio project by Shaik Arham Saquib.** LedgerPoint combines a public, responsive case-study website with a separate Python/Streamlit demonstration of fictional accounting workflows.
 
-The repository now contains a separate premium, read-only finance operations case-study frontend:
+**[Explore the LedgerPoint website](https://ledgerpoint-ai.vercel.app/)** · **[Open the Streamlit demo](https://ledgerpoint-finance-operations.streamlit.app/)** · **[Reviewer guide](REVIEWER_GUIDE.md)** · **[QA status](QA_STATUS.md)**
 
-- `index.html` — accessible single-page structure, executive overview, reconciliation, invoices, financial performance and case study
-- `styles.css` — responsive navy/teal design system, KPI cards, animated hero and mobile navigation
-- `script.js` — hash-based navigation and view switching, without external libraries
-- `assets/logo.svg` — original LedgerPoint vector logo
-- `.github/workflows/deploy-website.yml` — GitHub Pages deployment workflow (requires GitHub Pages to be enabled with GitHub Actions as source)
+> **Independent project.** LedgerPoint is not affiliated with, endorsed by, or commissioned by DataPoint Ireland. All businesses, customers, transactions, financial figures and scenarios are fictional. It is not production accounting software or a source of statutory tax or payroll advice.
 
-**Separate demos:** The standalone website is a curated fictional case study. The original `app.py` Streamlit application and its interactive Python finance controls remain available at https://ledgerpoint-finance-operations.streamlit.app/.
+## Website and application journey
 
-**Verification:** The HTML/CSS/JS website is committed but browser rendering, mobile visual QA and public GitHub Pages deployment are not yet independently confirmed. The prior 209-test GitHub Actions result applies to an earlier Python PR commit and does not certify the new frontend.
+The standalone website presents a fictional finance-operations case study with an executive overview, invoices, reconciliation, reporting, investigation material, an introductory film and an **About & Application** section. It is built with HTML, CSS and JavaScript, with no frontend framework required.
 
+- **Website:** https://ledgerpoint-ai.vercel.app/
+- **Introduction:** `assets/ledgerpoint-intro-web.mp4`, with thumbnail, poster, captions and transcript
+- **View CV:** opens `assets/Shaik_Arham_Saquib_DataPoint.pdf` in a new tab
+- **Download CV:** uses `/api/download-cv`, a server-side response intended to provide a downloadable PDF attachment
+- **Legal and privacy notice:** `legal.html`
 
-**A fictional finance-operations simulator built with Python and Streamlit.**
+The download endpoint is implemented and the latest Vercel build was reported READY. **A successful download on every Safari/iPhone configuration has not yet been independently verified.** PDF behavior may vary by browser and device.
 
-LedgerPoint is an independent portfolio work sample demonstrating how invoice processing, double-entry accounting, payment allocation, bank reconciliation and financial reporting can work together in one auditable-in-process workflow.
+### Visitor activity notifications
 
-> **Important:** This is an educational demonstration, not accounting software for real businesses. All entities and transactions are fictional. VAT rates are illustrative and are **not** a statement of Irish tax rules. LedgerPoint is not affiliated with DataPoint Ireland.
+`activity-alerts.js` collects basic engagement flags for a page session: website opened, introduction video played, CV viewed (link clicked) and CV download requested (link clicked). It posts a summary to the Vercel serverless endpoint `api/notify.js`, which sends an email through Resend.
 
-## Current workstream status (November 2026)
+- The Resend credential is read from the **server-side** environment variable `RESEND_API_KEY`. **Never commit the key** or expose it in browser JavaScript.
+- Vercel network headers may supply an **approximate IP-derived city, region and country**. This is not GPS, a verified physical location or a street address; network routing, VPNs and privacy relays can make it inaccurate.
+- CV clicks are **not** proof that a PDF was successfully saved or read.
+- The notification endpoint currently has **no server-side rate limiting**. Add abuse protection before relying on it for sustained public traffic.
+- The privacy notice should be reviewed and updated to explicitly describe activity notification processing.
 
-Workstreams 1–8 were implemented earlier. Workstreams 9–14 are committed in the repository, including CSV staging, exception case management, budget scenarios, cash movement and a fictional payroll demonstration, and session-only maker-checker approvals with activity history.
+## Streamlit finance demonstration
 
-**Verification limitation:** GitHub source and commits have been inspected, but a passing current pytest run, GitHub Actions workflow and deployed Streamlit end-to-end tests have **not** been independently confirmed for Workstreams 9–14. Treat these features as implemented, not QA-signed-off. Older test counts elsewhere in this README refer only to earlier project phases.
+The separate `app.py` dashboard and `src/ledgerpoint/` modules demonstrate:
 
-**Approval/audit disclaimer:** The approvals tab uses fictional, self-entered actors and session-only append-style events. It has no authentication, permanent storage, cryptographic integrity guarantees or real financial authorisation. Approvals never post transactions.\n\n**Payroll disclaimer:** The payroll tab uses a user-entered *fictional deduction percentage*. It does not calculate Irish PAYE, USC, PRSI, pensions or tax credits, and is not suitable for payroll processing or statutory compliance.
-
-**[Start with the 3-minute reviewer guide](REVIEWER_GUIDE.md)** · [Open the live demo](https://ledgerpoint-finance-operations.streamlit.app/) · [QA status](QA_STATUS.md)
-
-## What you can explore
-
-| Area | Implemented demonstration |
+| Area | Fictional functionality |
 | --- | --- |
-| Accounting controls | Balanced journals, account validation, period locks, journal reversals and trial balance |
-| Invoice operations | Sales and purchase invoices, CSV intake and illustrative VAT amounts |
-| Payments | Customer receipts, supplier payments, outstanding balances and ageing |
-| Reconciliation | Reference and amount matching, duplicate detection and unmatched bank transactions |
-| Reporting | Profit and loss, simplified balance sheet, monthly results, budget variance and close checks |
-| Web dashboard | Twelve Streamlit tabs with isolated interactive demos and CSV downloads |
-| Quality | Earlier phase test count is historical; current full-suite and deployment verification pending |
+| Accounting | Balanced journals, account validation, reversals, period locks and trial balance |
+| Invoices | Sales and purchase invoices, CSV staging and illustrative VAT |
+| Receivables and settlements | Receipts, supplier payments, balances and ageing |
+| Bank reconciliation | Reference/amount matching, duplicates and unmatched entries |
+| Reporting | Profit and loss, simplified balance sheet, monthly results and variance |
+| Controls and investigations | Exception cases, maker-checker-style session demonstrations and close checks |
+| Additional scenarios | Budget, cash movement and simplified fictional payroll |
 
-The dashboard runs a deterministic fictional baseline. Isolated journal, CSV staging, case management and approval interactions are available, but they do not persist across sessions or alter the baseline financial records.
+The built-in October 2026 scenario includes a deliberately unresolved bank-only debit. It is **not** automatically posted. Approval history is session-only, with no real user authentication, immutable audit trail or payment authority. Payroll does **not** calculate Irish PAYE, USC, PRSI or statutory deductions.
 
-## Run locally (Windows PowerShell)
+## Run locally
 
-Requires **Python 3.11 or newer** and Git.
+Use Python 3.11+ and Git. On Windows PowerShell:
 
 ```powershell
 git clone https://github.com/ShaikArham/ledgerpoint-finance-operations.git
@@ -59,64 +58,39 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m streamlit run app.py
 ```
 
-If Python 3.11 is not installed, replace `py -3.11` with a suitable Python 3.11+ launcher. Streamlit normally prints a local URL such as `http://localhost:8501`.
+The website's `api/` routes are Vercel serverless functions. A static local file server does not reproduce those endpoints or Vercel's geolocation headers.
 
-Already cloned the project? Run:
-
-```powershell
-git pull origin main
-.\.venv\Scripts\python.exe -m pip install -r requirements-dashboard.txt
-.\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe -m streamlit run app.py
-```
-
-## Example scenario
-
-The built-in fictional October 2026 dataset includes:
-
-- Sales invoice: EUR 1,000 net plus EUR 230 illustrative VAT
-- Purchase invoice: EUR 300 net plus EUR 69 illustrative VAT
-- Customer receipt: EUR 500, leaving EUR 730 receivable
-- Supplier payment: EUR 369, fully settling the purchase
-- Reported net profit: EUR 700
-- Bank reconciliation: two matches and one unmatched bank transaction requiring investigation
-
-The unmatched transaction is intentionally **not** automatically posted.
-
-## Repository structure
+## Key repository files
 
 ```text
-app.py                      Streamlit dashboard
-src/ledgerpoint/            Finance operations and reporting engine
-tests/                      Automated unit and integration-style tests
-docs/                       Accounting assumptions, phase notes and limitations
-requirements-dashboard.txt  Dashboard dependencies
-pyproject.toml              Python package and test dependencies
-.github/workflows/          GitHub Actions test checks
+index.html                 Public case-study website
+styles.css, script.js      Website styling and interactions
+intro.js, film.*           Introduction and film presentation
+activity-alerts.js         Client-side activity summary
+api/notify.js              Server-side Resend notification endpoint
+api/download-cv.js         Server-side PDF attachment endpoint
+assets/                    Video, captions, images and public CV
+vercel.json                Vercel routing and security headers
+legal.html                 Legal and privacy information
+app.py                     Streamlit finance dashboard
+src/ledgerpoint/           Python finance-operations modules
+tests/                     Automated tests
+docs/                      Accounting assumptions, phase and release notes
+.github/workflows/         GitHub Actions workflows
 ```
 
-## Project boundaries
+## Deployment and verification
 
-- No real financial, employee, payroll or bank data
-- No Irish statutory VAT or payroll calculations or filings
-- No persistent database, multi-user permissions or immutable audit trail
-- No bank API connection or automated bank exception resolution
-- Simplified statements are **not** statutory financial statements
-- Period-close checklist does not replace an accountant's review
+The website is hosted on Vercel. The active review work has been developed on `review/film-first-and-overview`; the `main` branch and GitHub Pages workflow may not reflect the latest Vercel website. An intermediate preview build at commit `881005a` failed because the configuration referenced a function not yet committed. A later deployment containing `api/download-cv.js` reached **READY**. This does not by itself prove end-to-end Safari download behavior.
 
-## Development roadmap
+Review [release results](docs/RELEASE_RESULTS.md), [video release gate](docs/VIDEO_RELEASE_GATE_2026-11-04.md), [QA status](QA_STATUS.md) and [the reviewer guide](REVIEWER_GUIDE.md) for the scope and limitations of earlier checks. Historical test counts are not evidence of a fresh test run.
 
-- [x] Accounting foundation and validation
-- [x] Invoice processing, settlement and reconciliation
-- [x] Financial reporting and fictional end-to-end scenario
-- [x] First read-only local dashboard
-- [ ] Dashboard usability, accessibility and mobile verification
-- [ ] Official-source Irish VAT/payroll research and carefully scoped illustrative workflows
-- [ ] Public deployment and reproducible demonstration
-- [ ] Final research paper, measured evaluation and application presentation
+## Security and privacy boundaries
 
-## Documentation
+- Do not commit API keys, `.env` files, passwords or other secrets.
+- Public CV and portfolio assets are intentionally accessible to anyone with the URL.
+- This demo does not use real financial, payroll, customer or banking records.
+- It does not connect to a real bank, submit payments, or provide statutory accounts.
+- Approximate location and browser classification are fallible; no visitor identity is established by these notifications.
 
-Start with [accounting rules](docs/ACCOUNTING-RULES.md), [job-role mapping](docs/JD-MAPPING.md), [dashboard setup](docs/PHASE-6-1.md) and [paper outline](docs/PAPER-OUTLINE.md).
-
-**Author:** Shaik Arham Saquib. Independent portfolio project.
+**Author:** Shaik Arham Saquib · Independent portfolio project · November 2026
