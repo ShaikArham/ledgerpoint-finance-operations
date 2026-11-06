@@ -1,1 +1,139 @@
-(()=>{"use strict";const gate=document.getElementById("film-gate"),enter=document.getElementById("intro-enter");if(!gate||!enter)return;const main=document.getElementById("main"),video=document.getElementById("intro-video"),play=document.getElementById("intro-play"),filmLink=document.getElementById("intro-film-link");let filmSource="";let previousFocus=document.activeElement;function close(){if(video){video.pause();}gate.hidden=true;document.body.classList.remove("intro-open");try{sessionStorage.setItem("ledgerpoint-intro-seen","1")}catch{};main?.focus({preventScroll:true});}function open(){previousFocus=document.activeElement;gate.hidden=false;document.body.classList.add("intro-open");enter.focus({preventScroll:true});}enter.addEventListener("click",close);if(video&&play){video.addEventListener("ended",close);play.addEventListener("click",async()=>{if(!filmSource)return;video.src=filmSource;video.hidden=false;gate.classList.add("has-film");try{await video.play();play.textContent="Playing film"}catch{play.textContent="Press play in the video player"}});(async()=>{for(const file of ["ledgerpoint-intro-1080p.mp4","ledgerpoint-intro-web.mp4"]){try{const response=await fetch("./assets/"+file,{method:"HEAD"});if(response.ok&&(response.headers.get("content-type")||"").includes("video")){filmSource="./assets/"+file;play.hidden=false;filmLink.hidden=true;break}}catch{}}})();}gate.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();close()}if(e.key==="Tab"){const focusable=[...gate.querySelectorAll("a[href],button:not([disabled])")];if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});const direct=location.hash&&location.hash!=="#intro";let seen=false;try{seen=sessionStorage.getItem("ledgerpoint-intro-seen")==="1"}catch{};if(direct||seen){gate.hidden=true}else{open()}window.addEventListener("pageshow",()=>{if(!gate.hidden)enter.focus({preventScroll:true})});})();
+(() => {
+  "use strict";
+  const gate = document.getElementById("film-gate"),
+    enter = document.getElementById("intro-enter");
+  if (!gate || !enter) return;
+  const main = document.getElementById("main"),
+    shell = document.getElementById("app-shell"),
+    video = document.getElementById("intro-video"),
+    play = document.getElementById("intro-play"),
+    poster = document.getElementById("intro-poster"),
+    status = document.getElementById("intro-status");
+  if (!main || !shell || !video || !play || !poster || !status) return;
+  let timer;
+  let closing = false;
+  const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  video.defaultPlaybackRate = 1;
+  video.playbackRate = 1;
+  video.addEventListener("loadedmetadata", () => { video.playbackRate = 1; });
+  function finishClose() {
+    gate.hidden = true;
+    gate.classList.remove("film-exiting");
+    shell.classList.remove("app-revealing");
+    shell.inert = false;
+    document.body.classList.remove("intro-open");
+    closing = false;
+    if (location.hash !== "#overview") location.hash = "overview";
+    main?.focus({ preventScroll: true });
+  }
+  function close() {
+    clearTimeout(timer);
+    video.pause();
+    if (closing) return;
+    closing = true;
+    if (reducedMotion()) { finishClose(); return; }
+    gate.classList.add("film-exiting");
+    shell.classList.add("app-revealing");
+    window.setTimeout(finishClose, 620);
+  }
+  enter.addEventListener("click", close);
+  // Clicking the backdrop outside the intro card goes straight to Overview.
+  gate.addEventListener("click", (event) => {
+    if (event.target === gate) close();
+  });
+  play.addEventListener("click", async () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { if (video.readyState < 2 && video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) fallback(); }, 15000);
+    status.textContent = "Loading film…";
+    play.hidden = true;
+    video.hidden = false;
+    poster.hidden = true;
+    try {
+      video.load();
+      video.playbackRate = 1;
+      await video.play();
+      clearTimeout(timer);
+      status.textContent =
+        "Playing at normal speed. Use the player controls to pause or seek.";
+    } catch {
+      if (video.error) {
+        fallback();
+      } else {
+        status.textContent = "Press play in the video controls to begin.";
+      }
+    }
+  });
+  function fallback() {
+    clearTimeout(timer);
+    video.pause();
+    video.hidden = true;
+    poster.hidden = false;
+    play.hidden = false;
+    play.textContent = "Retry film";
+    play.setAttribute("aria-label", "Retry film");
+    status.textContent =
+      "The film could not load. Retry or explore the reconciliation case below.";
+  }
+  video.addEventListener("error", fallback);
+  video.addEventListener("loadeddata", () => { if (!video.paused) status.textContent = "Playing at normal speed (1×)."; });
+  video.addEventListener("ratechange", () => { if (video.playbackRate !== 1) video.playbackRate = 1; });
+  video.addEventListener("playing", () => { clearTimeout(timer); status.textContent = "Playing at normal speed (1×)."; });
+  video.addEventListener("waiting", () => { status.textContent = "Buffering film…"; });
+  video.addEventListener("stalled", () => { status.textContent = "Connection interrupted. The film will resume when enough data loads."; });
+  video.addEventListener("ended", () => {
+    status.textContent =
+      "Film complete. Replay using the player controls or explore LedgerPoint.";
+  });
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      if (gate.hidden) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+      }
+      if (e.key === "Tab") {
+        const nodes = [
+          ...gate.querySelectorAll("button,video[controls],a[href]"),
+        ].filter((n) => !n.hidden && n.getClientRects().length);
+        const first = nodes[0],
+          last = nodes.at(-1);
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    true,
+  );
+  document.querySelectorAll("[data-replay-film]").forEach((button) =>
+    button.addEventListener("click", () => {
+      gate.classList.remove("film-exiting");
+      shell.classList.remove("app-revealing");
+      video.pause();
+      video.currentTime = 0;
+      video.playbackRate = 1;
+      video.hidden = true;
+      poster.hidden = false;
+      gate.hidden = false;
+      shell.inert = true;
+      document.body.classList.add("intro-open");
+      play.hidden = false;
+      play.textContent = "▶ Play";
+      play.setAttribute("aria-label", "Play LedgerPoint film");
+      play.focus();
+    }),
+  );
+  // Show the film on every fresh homepage visit; prior viewing must not hide it.
+  if (location.hash && location.hash !== "#intro") {
+    gate.hidden = true;
+  } else {
+    gate.hidden = false;
+    shell.inert = true;
+    document.body.classList.add("intro-open");
+    play.focus({ preventScroll: true });
+  }
+})();

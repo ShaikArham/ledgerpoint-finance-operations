@@ -1,0 +1,54 @@
+[
+  {
+    "playback": {
+      "duration": 90,
+      "width": 1280,
+      "audio": 117,
+      "captions": 1,
+      "cues": 12
+    }
+  },
+  {
+    "investigation_combinations": 24,
+    "hold_reset": "passed"
+  },
+  {
+    "cv_download_sha256": "3fedddde8052ac6e42a97f2755f8e74acaeb6441b8c4950e57a336ef676974a2"
+  },
+  {
+    "width": 320,
+    "overflow": []
+  },
+  {
+    "width": 375,
+    "overflow": []
+  },
+  {
+    "width": 390,
+    "overflow": []
+  },
+  {
+    "width": 430,
+    "overflow": []
+  },
+  {
+    "width": 768,
+    "overflow": []
+  },
+  {
+    "width": 1024,
+    "overflow": []
+  },
+  {
+    "width": 1440,
+    "overflow": []
+  },
+  {
+    "width": 1920,
+    "overflow": []
+  },
+  {
+    "history_deeplinks": "passed",
+    "browser_errors": []
+  }
+]

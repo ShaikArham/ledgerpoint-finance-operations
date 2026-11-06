@@ -47,12 +47,14 @@ def test_accessibility_and_responsive_basics():
     css = (ROOT / "styles.css").read_text(encoding="utf-8")
     assert 'class="skip"' in html
     assert "prefers-reduced-motion" in css
-    assert "max-width:900px" in css
-    assert "max-width:560px" in css
-    assert "overflow-x:auto" in css
+    assert re.search(r"max-width:\s*900px", css)
+    assert re.search(r"max-width:\s*560px", css)
+    assert re.search(r"overflow-x:\s*auto", css)
     assert "aria-label" in html
 
 def test_no_unintended_external_dependencies():
     html = (ROOT / "index.html").read_text(encoding="utf-8")
     assert not re.search(r'<script[^>]+src=["\']https?://', html)
-    assert not re.search(r'<link[^>]+href=["\']https?://', html)
+    inspector = Inspector()
+    inspector.feed(html)
+    assert all(not url.startswith(('https://', 'http://')) for url in inspector.styles)

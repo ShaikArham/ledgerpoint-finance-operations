@@ -1,0 +1,25 @@
+{
+  "scope": "Local Chromium mobile Lighthouse; not production or real-device results",
+  "categories": {
+    "performance": 0.95,
+    "accessibility": 1,
+    "best-practices": 1,
+    "seo": 1,
+    "agentic-browsing": 1
+  },
+  "metrics": {
+    "largest-contentful-paint": {
+      "value": 2779.0015000000003,
+      "display": "2.8\u00a0s"
+    },
+    "cumulative-layout-shift": {
+      "value": 0,
+      "display": "0"
+    },
+    "total-blocking-time": {
+      "value": 20,
+      "display": "20\u00a0ms"
+    }
+  },
+  "INP": "Not measured; TBT is not INP"
+}
