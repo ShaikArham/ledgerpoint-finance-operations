@@ -1,34 +1,43 @@
-/* Minimal, first-party activity notifications. No cookies, fingerprinting, or IP collection. */
+/* One privacy-conscious activity summary per page session. No visitor identification. */
 (() => {
   if (navigator.webdriver || /bot|crawler|spider|headless|preview/i.test(navigator.userAgent)) return;
-  const sent = new Set();
-  const notify = (event, detail) => {
-    const key = event + ':' + (detail || '');
-    if (sent.has(key)) return;
-    sent.add(key);
+  const events = { website_visit: true, video_play: false, cv_view: false, cv_download: false };
+  let timer;
+  let submitted = false;
+  const flush = () => {
+    if (submitted) return;
+    submitted = true;
     fetch('/api/notify', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({event, detail: detail || '', page: location.pathname}),
+      body: JSON.stringify({event: 'activity_summary', events, page: location.pathname}),
       keepalive: true,
       credentials: 'same-origin'
-    }).then((response) => {
-      if (!response.ok) console.warn('LedgerPoint notification failed:', event, response.status);
-    }).catch((error) => console.warn('LedgerPoint notification network error:', event, error));
+    }).then(r => {
+      if (!r.ok) console.warn('LedgerPoint activity summary failed:', r.status);
+    }).catch(e => console.warn('LedgerPoint activity summary network error:', e));
+  };
+  const schedule = () => {
+    if (submitted) return;
+    clearTimeout(timer);
+    timer = setTimeout(flush, 12000);
+  };
+  const mark = (name) => {
+    if (submitted) return;
+    events[name] = true;
+    schedule();
   };
   document.addEventListener('DOMContentLoaded', () => {
-    notify('website_visit', '');
+    schedule();
     const video = document.getElementById('intro-video');
-    if (video) {
-      video.addEventListener('playing', () => notify('video_play', 'Introduction film'));
-    }
-    document.addEventListener('click', (e) => {
+    if (video) video.addEventListener('playing', () => mark('video_play'));
+    document.addEventListener('click', e => {
       const a = e.target.closest('a[href]');
       if (!a) return;
-      const href = a.getAttribute('href') || '';
-      if (/Shaik_Arham_Saquib_DataPoint\\.pdf/i.test(href)) {
-        notify('cv_click', a.hasAttribute('download') ? 'Download CV' : 'View CV');
-      }
+      const href = (a.getAttribute('href') || '').toLowerCase();
+      if (!href.includes('shaik_arham_saquib_datapoint.pdf')) return;
+      mark(a.hasAttribute('download') ? 'cv_download' : 'cv_view');
     });
+    window.addEventListener('pagehide', flush);
   });
 })();
