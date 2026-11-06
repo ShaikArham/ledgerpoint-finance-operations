@@ -12,7 +12,9 @@
       body: JSON.stringify({event, detail: detail || '', page: location.pathname}),
       keepalive: true,
       credentials: 'same-origin'
-    }).catch(() => {});
+    }).then((response) => {
+      if (!response.ok) console.warn('LedgerPoint notification failed:', event, response.status);
+    }).catch((error) => console.warn('LedgerPoint notification network error:', event, error));
   };
   document.addEventListener('DOMContentLoaded', () => {
     notify('website_visit', '');
