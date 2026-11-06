@@ -18,7 +18,13 @@ module.exports = async (req, res) => {
   const device = /Mobile|Android|iPhone/i.test(ua) ? 'Mobile' : 'Desktop / other';
   const browser = ua.includes('Edg/') ? 'Edge' : ua.includes('Chrome/') ? 'Chrome' : ua.includes('Firefox/') ? 'Firefox' : ua.includes('Safari/') ? 'Safari' : 'Unknown';
   const geoPart = header => clean(req.headers[header] || '', 80);
-  const locationParts = [geoPart('x-vercel-ip-city'), geoPart('x-vercel-ip-country-region'), geoPart('x-vercel-ip-country')].filter(Boolean);
+  const countryCode = geoPart('x-vercel-ip-country').toUpperCase();
+  const regionCode = geoPart('x-vercel-ip-country-region').toUpperCase();
+  const city = geoPart('x-vercel-ip-city');
+  const countryName = countryCode ? (new Intl.DisplayNames(['en'], {type:'region'}).of(countryCode) || countryCode) : '';
+  const irelandRegions = {L:'Leinster', M:'Munster', C:'Connacht', U:'Ulster'};
+  const regionName = countryCode === 'IE' ? (irelandRegions[regionCode] || regionCode) : regionCode;
+  const locationParts = [city, regionName, countryName].filter(Boolean);
   const approximateLocation = locationParts.length ? locationParts.join(', ') : 'Unavailable';
   const message = [
     'LedgerPoint activity summary', '',
