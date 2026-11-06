@@ -25,7 +25,12 @@
   const mark = (name) => {
     if (submitted) return;
     events[name] = true;
-    schedule();
+    if (name === 'cv_download') {
+      clearTimeout(timer);
+      timer = setTimeout(flush, 1500);
+    } else {
+      schedule();
+    }
   };
   document.addEventListener('DOMContentLoaded', () => {
     schedule();
