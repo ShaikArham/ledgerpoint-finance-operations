@@ -40,6 +40,14 @@
     {
       "src": "404.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "api/notify.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "activity-alerts.js",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
