@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
   const title = EVENTS[event];
   const time = new Intl.DateTimeFormat('en-IE',{timeZone:'Europe/Dublin',dateStyle:'medium',timeStyle:'medium'}).format(new Date());
   const device = /Mobile|Android|iPhone/i.test(ua) ? 'Mobile' : 'Desktop / other';
-  const browser = /Edg\\//.test(ua) ? 'Edge' : /Chrome\\//.test(ua) ? 'Chrome' : /Firefox\\//.test(ua) ? 'Firefox' : /Safari\\//.test(ua) ? 'Safari' : 'Unknown';
+  const browser = ua.includes('Edg/') ? 'Edge' : ua.includes('Chrome/') ? 'Chrome' : ua.includes('Firefox/') ? 'Firefox' : ua.includes('Safari/') ? 'Safari' : 'Unknown';
   const page = clean(body.page,100);
   const detail = clean(body.detail,100);
   const message = [title,'Time (Ireland): '+time,'Page: '+page,'Detail: '+(detail || 'Not applicable'),'Device: '+device,'Browser: '+browser,'Visitor identity: Not available','Note: Visits and clicks do not prove a human read the content.'].join('\\n');
