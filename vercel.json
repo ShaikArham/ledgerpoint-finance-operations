@@ -62,6 +62,14 @@
       "continue": true
     },
     {
+      "src": "/api/notify/?",
+      "dest": "/api/notify.js",
+      "methods": [
+        "POST",
+        "OPTIONS"
+      ]
+    },
+    {
       "src": "/",
       "dest": "/index.html"
     },
